@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>LecTrack</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-teal: radial-gradient(circle at top left, #243f4b 0%, #111c26 100%);
+      --glass-bg: rgba(255, 255, 255, 0.035);
+      --glass-bg-hover: rgba(255, 255, 255, 0.07);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --accent-teal: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.4);
+      --text-main: #ffffff;
+      --text-dim: #94a3b8;
+      --transition-core: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-teal);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 10px 20px 2px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.5px;
+      margin: 0;
+    }
+
+    .shimmer-title {
+      display: inline-block;
+      background: linear-gradient(90deg, #f8fafc, #38bdf8, #f8fafc);
+      background-size: 200% auto;
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: gradientShine 4s linear infinite, float 4s ease-in-out infinite;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
+    }
+
+    @keyframes gradientShine {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .last-day {
+      text-align: center;
+      margin-bottom: 5px;
+      font-weight: 600;
+      font-size: 0.7rem;
+      color: var(--accent-teal);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.9;
+    }
+
+    .top-btn {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 20px auto 30px;
+      padding: 0 20px;
+      max-width: 900px;
+    }
+
+    button {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      padding: 10px 22px;
+      border-radius: 14px;
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition-core);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    button:hover {
+      background: var(--glass-bg-hover);
+      transform: translateY(-3px);
+      border-color: var(--accent-teal);
+      box-shadow: 0 15px 30px var(--accent-glow);
+    }
+
+    .calci-highlight-btn {
+      color: var(--accent-teal) !important;
+      font-weight: 800 !important;
+      border-color: var(--accent-teal) !important;
+    }
+
+    .calci-highlight-btn:hover {
+      box-shadow: 0 0 25px var(--accent-glow) !important;
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    /* TARGET SELECTOR */
+    .target-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .target-toggle label {
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      font-size: 0.7rem;
+      font-weight: 600;
+      transition: var(--transition-core);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .target-toggle label:has(input:checked) {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--accent-teal);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 850px;
+      margin: auto;
+      padding: 0 20px 60px;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 4px 12px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      transition: var(--transition-core);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .card:hover {
+      background: var(--glass-bg-hover);
+      transform: translateY(-5px) scale(1.01);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .subject {
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: -0.1px;
+    }
+
+    .ratio {
+      text-align: center;
+      font-weight: 500;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .ratio-badge {
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent-teal);
+      padding: 2px 6px;
+      border-radius: 5px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      margin-left: 4px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .remaining {
+      text-align: right;
+      color: #10b981;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    /* CA TILES STYLES */
+    .ca-section {
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ca-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .ca-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 8px;
+      text-align: center;
+      transition: var(--transition-core);
+    }
+
+    .ca-card:hover {
+      background: rgba(56, 189, 248, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .ca-date {
+      font-size: 0.65rem;
+      color: var(--accent-teal);
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .ca-sub {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* MODAL SYSTEM OVERHAUL */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      z-index: 2000;
+    }
+
+    .modal-content {
+      position: relative;
+      background: rgba(15, 25, 30, 0.92);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      margin: 10px auto;
+      padding: 15px;
+      width: 96%;
+      max-width: 1000px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+      max-height: 92vh;
+      overflow-y: auto;
+      animation: premiumSlide 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @keyframes premiumSlide {
+      from {
+        transform: translateY(60px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-core);
+      color: var(--text-dim);
+    }
+
+    .close-btn:hover {
+      background: #ef4444;
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    /* TABLES */
+    .tt-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 4px;
+    }
+
+    .tt-table th {
+      padding: 6px;
+      color: var(--text-dim);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 700;
+    }
+
+    .tt-table td {
+      padding: 8px 5px;
+      background: rgba(255, 255, 255, 0.03);
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .tt-table td:first-child {
+      border-left: 1px solid rgba(255, 255, 255, 0.03);
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+    }
+
+    .tt-table td:last-child {
+      border-right: 1px solid rgba(255, 255, 255, 0.03);
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
+    .day-col {
+      color: var(--accent-teal);
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+
+    .lunch-cell {
+      background: rgba(56, 189, 248, 0.05) !important;
+      color: var(--accent-teal);
+      font-size: 0.75rem;
+      font-weight: 800;
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      width: 45px;
+      border-radius: 15px !important;
+    }
+
+    .sub-code {
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      margin-bottom: 1px;
+    }
+
+    .sub-name {
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    /* MSE / DATE SHEET STYLES */
+    .mse-header {
+      margin: 10px 0 5px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: white;
+    }
+
+    .highlight-row td {
+      background: rgba(245, 158, 11, 0.1) !important;
+      color: #f59e0b !important;
+      border-color: rgba(245, 158, 11, 0.2) !important;
+    }
+
+    .highlight-badge {
+      background: #f59e0b;
+      color: #000;
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-size: 0.65rem;
+      font-weight: 900;
+      margin-left: 8px;
+    }
+
+    .completed-row td {
+      background: rgba(16, 185, 129, 0.08) !important;
+      color: #10b981 !important;
+      border-color: rgba(16, 185, 129, 0.15) !important;
+    }
+
+    .completed-badge {
+      background: #10b981;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.6rem;
+      font-weight: 800;
+      margin-left: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    /* MULTI-COURSE CALCULATOR STYLES */
+    .calci-container {
+      max-height: 65vh;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .calci-container::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .calci-container::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 10px;
+    }
+
+    .calci-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .calci-table th {
+      text-align: center;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      padding: 10px 5px;
+      border-bottom: 1px solid var(--glass-border);
+      position: sticky;
+      top: 0;
+      background: rgba(15, 25, 30, 0.95);
+      z-index: 10;
+    }
+
+    .calci-row {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: var(--transition-core);
+    }
+
+    .calci-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .calci-row td {
+      padding: 10px 5px;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .calci-sub-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+      text-align: left !important;
+      line-height: 1.2;
+    }
+
+    .calci-input {
+      width: 55px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 8px 4px;
+      color: white;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: inherit;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .calci-input::-webkit-outer-spin-button,
+    .calci-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .calci-input:focus {
+      outline: none;
+      border-color: var(--accent-teal);
+      background: rgba(56, 189, 248, 0.1);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .calci-res {
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .calci-res.needed {
+      color: var(--accent-teal);
+    }
+
+    .calci-res.target-86 {
+      color: #94a3b8;
+    }
+
+    .calci-res.met {
+      color: #10b981;
+    }
+
+    .pe-disclaimer {
+      font-size: 0.55rem;
+      color: #f59e0b;
+      margin-top: 2px;
+      display: block;
+      font-weight: 600;
+    }
+
+    .calci-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .step-btn {
+      width: 28px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 800;
+      transition: var(--transition-core);
+      padding: 0;
+      line-height: 1;
+    }
+
+    .step-btn:hover {
+      background: var(--accent-teal);
+      color: black;
+      border-color: var(--accent-teal);
+      transform: scale(1.1);
+    }
+
+    /* CALENDAR STYLES */
+    .calendar-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 10px;
+    }
+
+    .month-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 15px;
+    }
+
+    .month-name {
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--accent-teal);
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      text-align: center;
+    }
+
+    .day-header {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--text-dim);
+      padding-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 8px;
+      position: relative;
+      transition: var(--transition-core);
+      border: 1px solid transparent;
+    }
+
+    .cal-day:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: scale(1.1);
+      z-index: 2;
+    }
+
+    /* Day States */
+    .cal-day.holiday {
+      color: #ff4d4d;
+      font-weight: 800;
+    }
+
+    .cal-day.holiday::after {
+      content: '';
+      position: absolute;
+      bottom: 6px;
+      width: 4px;
+      height: 4px;
+      background: #ff4d4d;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #ff4d4d;
+    }
+
+    .cal-day.mse {
+      background: rgba(245, 158, 11, 0.25);
+      color: #ffffff;
+      border-color: rgba(245, 158, 11, 0.5);
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+    }
+
+    .cal-day.mse .day-label {
+      color: #fcd34d;
+    }
+
+    .cal-day.ese {
+      background: rgba(139, 92, 246, 0.25);
+      color: #ffffff;
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+    }
+
+    .cal-day.ese .day-label {
+      color: #c4b5fd;
+    }
+
+    .cal-day.practical {
+      background: rgba(56, 189, 248, 0.25);
+      color: #ffffff;
+      border-color: rgba(56, 189, 248, 0.5);
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .cal-day.practical .day-label {
+      color: var(--accent-teal);
+    }
+
+    .cal-day.completed {
+      background: rgba(16, 185, 129, 0.4) !important;
+      border-color: #10b981 !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
+      font-weight: 800 !important;
+    }
+
+    .cal-day.completed .day-label {
+      color: #ffffff !important;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+
+    .day-label {
+      font-size: 0.5rem;
+      font-weight: 900;
+      position: absolute;
+      bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 768px) {
+      .top-btn {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .remaining {
+        text-align: center;
+      }
+
+      .modal-content {
+        padding: 30px 20px;
+      }
+
+      .tt-table {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <h1><span class="shimmer-title">LecTrack</span></h1>
+
+  <div class="top-btn">
+    <button onclick="openAttendance()">Live Attendance</button>
+    <button onclick="openTimeTable()">Time-Table</button>
+    <button onclick="openCalendar()">Calendar</button>
+    <button onclick="openDateSheet()">DateSheet</button>
+    <button onclick="window.open('https://3107alok.github.io/LecTrack-PYQ/', '_blank')">PYQ / QB</button>
+  </div>
+
+  <div style="display: flex; justify-content: center; margin: -10px auto 25px;">
+    <button class="calci-highlight-btn" onclick="openAttendanceCalci()">🧮 Attendance Calci</button>
+  </div>
+
+  <h3 class="last-day">Last Teaching Day : 9 May</h3>
+  <div style="text-align: center; font-size: 0.65rem; color: #f59e0b; margin: 0 0 20px; font-weight: 600; opacity: 0.8;">
+    ⚠️ Note: 22 April (Wed) is treated as a holiday
+  </div>
+
+  <div class="target-toggle">
+    <label>
+      <input type="radio" name="targetPct" value="75" checked onchange="renderDashboard()"
+        style="accent-color: var(--accent-teal);"> 75% Target
+    </label>
+    <label>
+      <input type="radio" name="targetPct" value="86" onchange="renderDashboard()"
+        style="accent-color: var(--accent-teal);"> 86%
+      Target
+    </label>
+  </div>
+
+  <div class="container" id="dashboard"></div>
+
+  <!-- ATTENDANCE DETAILS MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <span class="close-btn" onclick="closeModal('modal')">✖</span>
+      <h2 id="modalTitle"></h2>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- TIMETABLE MODAL -->
+  <div class="modal" id="timeTableModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('timeTableModal')">✖</span>
+      <div id="timeTableContent"></div>
+    </div>
+  </div>
+
+  <!-- DATESHEET MODAL -->
+  <div class="modal date-sheet-modal" id="dateSheetModal">
+    <div class="modal-content slide-up-anim">
+      <span class="close-btn" onclick="closeModal('dateSheetModal')">✖</span>
+      <div id="dateSheetContent"></div>
+    </div>
+  </div>
+
+  <!-- CALENDAR MODAL -->
+  <div class="modal" id="calendarModal">
+    <div class="modal-content" style="max-width: 1100px;">
+      <span class="close-btn" onclick="closeModal('calendarModal')">✖</span>
+      <h2 style="text-align: center; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.5px;">📅 <span class="shimmer-title">Academic Calendar 2026</span></h2>
+      <div id="calendarContent"></div>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE CALCULATOR MODAL -->
+  <div class="modal" id="calciModal">
+    <div class="modal-content" style="max-width: 800px; padding: 20px;">
+      <span class="close-btn" onclick="closeModal('calciModal')">✖</span>
+      <h2 style="text-align: center; margin-bottom: 5px; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px;">
+        🧮 <span class="shimmer-title">Attendance Calci</span></h2>
+      <p style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 20px; font-weight: 500;">
+        Enter your current present counts to see how many more lectures you need to attend.
+      </p>
+      <div class="calci-container">
+        <table class="calci-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Subject</th>
+              <th>Current Present</th>
+              <th>Need for 75%</th>
+              <th>Need for 86%</th>
+            </tr>
+          </thead>
+          <tbody id="calciBody">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    // SUBJECTS
+    const subjects = {
+      "CS208B": "Web Technology",
+      "CS303B": "ANN & ML",
+      "CS401L": "DAA",
+      "CS401P": "DAA Lab",
+      "HS112L": "Universal Human Values",
+      "HS113L": "Aptitude",
+      "HS114L": "Soft Skills",
+      "IT202B": "Data Analytics",
+      "IT302L": "CN",
+      "IT302P": "CN Lab",
+      "PE": "Professional Elective"
+    };
+
+    // TIME PARSING HELPERS (Global)
+    const GLOBAL_MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    function parseExamTime(timeStr, dateRef) {
+      if (!timeStr || !timeStr.includes('-')) return null;
+      try {
+        const parts = timeStr.split("-");
+        const endPart = parts[1].trim(); 
+        const match = endPart.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (!match) return null;
+
+        let hours = parseInt(match[1]);
+        const mins = parseInt(match[2]);
+        const period = match[3].toUpperCase();
+
+        if (period === "PM" && hours < 12) hours += 12;
+        if (period === "AM" && hours === 12) hours = 0;
+
+        const res = new Date(dateRef);
+        res.setHours(hours, mins, 0, 0);
+        return res;
+      } catch (e) { return null; }
+    }
+
+    function isMseItemCompleted(item) {
+      if (!item.date || !item.time) return false;
+      const now = new Date();
+      const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      const parts = item.date.split(' ');
+      const day = parseInt(parts[0]);
+      const monthName = parts[1];
+      const monthIdx = GLOBAL_MONTH_NAMES.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
+      
+      const examDate = new Date(now.getFullYear(), monthIdx, day);
+      
+      if (examDate < todayAtMidnight) return true;
+      if (examDate.getTime() === todayAtMidnight.getTime()) {
+        const endTime = parseExamTime(item.time, now);
+        return endTime && now > endTime;
+      }
+      return false;
+    }
+
+    function getLatestExamEndTime(day, month) {
+      const monStr = GLOBAL_MONTH_NAMES[month].toLowerCase();
+      let latest = null;
+
+      mse2Data.forEach(item => {
+        if (!item.date) return;
+        const lowerDate = item.date.toLowerCase();
+        if (lowerDate.startsWith(day + " ") && lowerDate.includes(monStr)) {
+          const endTime = parseExamTime(item.time, new Date());
+          if (endTime && (!latest || endTime > latest)) latest = endTime;
+        }
+      });
+      return latest;
+    }
+
+    // CALCI PERSISTENCE
+    let calciState = JSON.parse(localStorage.getItem('lectrack_calci')) || {};
+
+    // PAST DATA
+    const pastData = {
+      "CS303B": { present: 28, total: 33 },
+      "IT302L": { present: 26, total: 30 },
+      "CS401L": { present: 30, total: 35 },
+      "CS401P": { present: 36, total: 36 },
+      "IT202B": { present: 31, total: 36 },
+      "CS208B": { present: 30, total: 31 },
+      "HS112L": { present: 13, total: 14 },
+      "HS113L": { present: 8, total: 8 },
+      "HS114L": { present: 8, total: 10 },
+      "IT302P": { present: 15, total: 16 },
+      "PE": { present: 40, total: 44 }
+    };
+
+    // TIMETABLE
+    const timetable = {
+      1: ["HS112L", "IT302L", "CS401L", "CS208B", "CS208B", "CS208B", "PE", "PE"],
+      2: ["CS303B", "CS303B", "CS401L", "IT302L", "CS401P", "CS401P"],
+      3: ["IT302L", "CS401L", "CS401P", "CS401P", "HS112L", "IT202B"],
+      4: ["CS303B", "HS113L", "IT302P", "IT302P", "PE", "PE", "CS208B"],
+      5: ["IT202B", "IT202B", "HS114L", "CS401L", "IT202B", "CS303B", "PE", "PE"]
+    };
+
+    // MSE 2 DATA
+    const mse2Data = [
+      { date: "20 April (Mon)", subject: "Web Technology", time: "10:00 AM - 12:00 PM" },
+      { date: "21 April (Tue)", subject: "ANN & ML", time: "10:00 AM - 12:00 PM" },
+      { date: "23 April (Thu)", subject: "CN", time: "10:00 AM - 12:00 PM" },
+      { date: "24 April (Fri)", subject: "Professional Elective", time: "10:00 AM - 12:00 PM" },
+      { date: "25 April (Sat)", subject: "UHV", time: "10:00 AM - 12:00 PM" },
+      { date: "25 April (Sat)", subject: "Aptitude", time: "01:30 PM - 03:00 PM" },
+      { date: "27 April (Mon)", subject: "Data Analytics", time: "10:00 AM - 12:00 PM" },
+      { date: "28 April (Tue)", subject: "DAA", time: "10:00 AM - 12:00 PM" }
+    ];
+
+    // CA DATA
+    const caData = [
+      { date: "15 April", subject: "DAA Theory & Lab", time: "11:40 am - 12:30 pm", status: "Completed" },
+      { date: "15 April", subject: "WT", time: "Subit certificates before 15 April",status:"Completed" },
+      { date: "16 April", subject: "ANN & ML", time: "10:50 am onwards",status:"Completed" },
+      { date: "17 April", subject: "DA", time: "11:40 am - 12:30pm " ,status:"Completed" },
+      { date: "17 April", subject: "AWS (Proff. Elective)", time: "3:10 pm onwards" ,status:"Completed" }
+    ];
+
+    // HOLIDAYS
+    const holidays = [
+      "2026-04-14",
+      "2026-04-20", "2026-04-21", "2026-04-22",
+      "2026-04-23", "2026-04-24", "2026-04-25",
+      "2026-04-27", "2026-04-28"
+    ];
+
+    const startDate = new Date("2026-04-13");
+    const endDate = new Date("2026-05-09");
+
+    // ⭐ TODAY (important)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // HOLIDAY CHECK — string comparison to avoid UTC timezone issues
+    function isHoliday(date) {
+      let y = date.getFullYear();
+      let m = String(date.getMonth() + 1).padStart(2, '0');
+      let d = String(date.getDate()).padStart(2, '0');
+      let str = y + '-' + m + '-' + d;
+      return holidays.includes(str);
+    }
+
+    // ⭐ FULL FUTURE (ratio ke liye) — counts periods per subject
+    function fullFutureCounts() {
+      let counts = {};
+      let current = new Date(startDate);
+
+      while (current <= endDate) {
+        let d = current.getDay();
+
+        if (d !== 0 && d !== 6 && !isHoliday(current)) {
+          let classes = timetable[d];
+
+          if (classes) {
+            classes.forEach(sub => {
+              counts[sub] = (counts[sub] || 0) + 1;
+            });
+          }
+        }
+
+        current.setDate(current.getDate() + 1);
+      }
+
+      return counts;
+    }
+
+    // ⭐ REMAINING (dynamic) — counts periods, includes today
+    function remainingCounts() {
+      let counts = {};
+
+      let current = new Date(today); // includes today
+
+      while (current <= endDate) {
+        let d = current.getDay();
+
+        if (d !== 0 && d !== 6 && !isHoliday(current)) {
+          let classes = timetable[d];
+
+          if (classes) {
+            classes.forEach(sub => {
+              counts[sub] = (counts[sub] || 0) + 1;
+            });
+          }
+        }
+
+        current.setDate(current.getDate() + 1);
+      }
+
+      return counts;
+    }
+
+    const fullFuture = fullFutureCounts();
+    const remaining = remainingCounts();
+
+    const dashboard = document.getElementById("dashboard");
+
+    // RENDER
+    function renderDashboard() {
+      dashboard.innerHTML = "";
+      let targetNode = document.querySelector('input[name="targetPct"]:checked');
+      let targetVal = targetNode ? targetNode.value : "75";
+      let multiplier = targetVal === "86" ? 0.86 : 0.75;
+
+      for (let sub in subjects) {
+
+        let past = pastData[sub] || { present: 0, total: 0 };
+
+        let finalTotal = past.total + (fullFuture[sub] || 0);
+        let required = Math.ceil(multiplier * finalTotal);
+
+        let futureLeft = remaining[sub] || 0;
+
+        dashboard.innerHTML += `
+      <div class="card" onclick="showDetails('${sub}')">
+        <div class="row">
+          <div class="subject">${subjects[sub]}</div>
+
+          <div class="ratio">For ${targetVal}%: 
+            <span class="ratio-badge">${required} / ${finalTotal}</span>
+          </div>
+
+          <div class="remaining">${futureLeft} lectures remaining</div>
+        </div>
+      </div>
+    `;
+      }
+    }
+
+    renderDashboard();
+
+    // DETAIL VIEW
+    function showDetails(subject) {
+
+      let html = "";
+      let current = new Date(today); // Start from today to show remaining lectures
+
+      while (current <= endDate) {
+
+        let d = current.getDay();
+
+        if (d !== 0 && d !== 6 && !isHoliday(current)) {
+          let classes = timetable[d];
+
+          if (classes) {
+            let count = classes.filter(s => s === subject).length;
+
+            if (count > 0) {
+
+              let day = current.toLocaleDateString("en-GB", { day: "numeric" });
+              let month = current.toLocaleDateString("en-GB", { month: "long" });
+              let weekday = current.toLocaleDateString("en-GB", { weekday: "short" });
+
+              html += `
+            <div style="margin-bottom:8px;">
+              📅 ${day} ${month} (${weekday}) ${count} hour${count > 1 ? "s" : ""}
+            </div>
+          `;
+            }
+          }
+        }
+
+        current.setDate(current.getDate() + 1);
+      }
+
+      document.getElementById("modalTitle").innerText = subjects[subject];
+      document.getElementById("modalContent").innerHTML = html;
+      document.getElementById("modal").style.display = "block";
+    }
+
+    // TIME TABLE VIEW (Transposed: Days in Rows, Time in Cols)
+    function openTimeTable() {
+      const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+      const times = [
+        "09:10-10:00",
+        "10:00-10:50",
+        "10:50-11:40",
+        "11:40-12:30",
+        "12:30-01:30", // Lunch
+        "01:30-02:20",
+        "02:20-03:10",
+        "03:10-04:00",
+        "04:00-04:50"
+      ];
+
+      let html = `<h2 style="text-align: center; margin-bottom: 20px;"><span class="shimmer-title">Time Table CS - 4A</span></h2>
+        <table class="tt-table">
+        <thead>
+          <tr>
+            <th>Day</th>
+            ${times.map(t => `<th>${t}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>`;
+
+      days.forEach((dayName, dayIdx) => {
+        const dayKey = dayIdx + 1;
+        html += `<tr>
+          <td class="day-col">${dayName}</td>
+          ${times.map((time, tIdx) => {
+          if (tIdx === 4) {
+            return dayIdx === 0 ? `<td rowspan="5" class="lunch-cell">LUNCH BREAK</td>` : '';
+          }
+          const periodIdx = tIdx < 4 ? tIdx : tIdx - 1;
+          const subCode = (timetable[dayKey] && timetable[dayKey][periodIdx]) || "-";
+          const subName = subjects[subCode] || subCode;
+          return `<td>
+              <div class="sub-code">${subCode}</div>
+              <div class="sub-name">${subName}</div>
+            </td>`;
+        }).join('')}
+        </tr>`;
+      });
+
+      html += `</tbody></table>`;
+
+      document.getElementById("timeTableContent").innerHTML = html;
+      document.getElementById("timeTableModal").style.display = "block";
+    }
+
+    // DATE SHEET VIEW
+    function openDateSheet() {
+      let html = renderMSE2();
+      document.getElementById("dateSheetContent").innerHTML = html;
+      document.getElementById("dateSheetModal").style.display = "block";
+    }
+
+    // MSE 2 RENDER
+    function renderMSE2() {
+      let html = `<div class="mse-header">📑 <span class="shimmer-title">MSE 2 Date Sheet</span></div>
+        <table class="tt-table mse-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Subject</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+      mse2Data.forEach(item => {
+        const isCompleted = isMseItemCompleted(item);
+        const rowClass = isCompleted ? 'class="completed-row"' : (item.highlight ? 'class="highlight-row"' : '');
+        const badge = isCompleted ? '<span class="completed-badge" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); margin: 0;">COMPLETED</span>' : (item.highlight ? '<span class="highlight-badge">Special</span>' : '');
+        
+        html += `<tr ${rowClass}>
+          <td style="font-weight:700;">${item.date}</td>
+          <td>${item.subject}</td>
+          <td style="position: relative;">
+            ${item.time}
+            ${badge}
+          </td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>`;
+
+      // CA Section
+      html += `
+        <div class="ca-section">
+          <div class="mse-header" style="font-size:1.1rem; margin-top:5px;">📝 <span class="shimmer-title">Continuous Assessment</span></div>
+          <div class="ca-grid">
+            ${caData.map(item => `
+              <div class="ca-card" ${item.status === 'Completed' ? 'style="border-color: #10b981; background: rgba(16, 185, 129, 0.1);"' : ''}>
+                <div class="ca-date" ${item.status === 'Completed' ? 'style="color: #10b981;"' : ''}>${item.date}</div>
+                <div class="ca-sub">${item.subject}</div>
+                ${item.time ? `<div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${item.time}</div>` : ''}
+                ${item.status === 'Completed' ? '<div style="font-size: 0.6rem; color: #10b981; font-weight: 800; margin-top: 4px; letter-spacing: 0.5px;">✓ COMPLETED</div>' : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      return html;
+    }
+
+    // CLOSE
+    function closeModal(id) {
+      document.getElementById(id || 'modal').style.display = "none";
+    }
+
+    // ATTENDANCE CALCULATOR LOGIC (Multi-Course)
+    function openAttendanceCalci() {
+      const tbody = document.getElementById('calciBody');
+      tbody.innerHTML = '';
+
+      for (let code in subjects) {
+        let past = pastData[code] || { present: 0, total: 0 };
+        let finalTotal = past.total + (fullFuture[code] || 0);
+
+        // Use persisted value if available, else fallback to system data
+        let currentPresent = calciState[code] !== undefined ? calciState[code] : past.present;
+
+        let tr = document.createElement('tr');
+        tr.className = 'calci-row';
+        tr.innerHTML = `
+          <td>
+            <div class="calci-sub-name">${subjects[code]}</div>
+            ${code === 'PE' ? '<span class="pe-disclaimer">Structure may vary</span>' : ''}
+          </td>
+          <td class="calci-control">
+            <button class="step-btn" onclick="adjustCalci('${code}', -1, ${finalTotal})">−</button>
+            <input type="number" id="input-${code}" class="calci-input" value="${currentPresent}" 
+                   oninput="updateCalciRow('${code}', this.value, ${finalTotal})">
+            <button class="step-btn" onclick="adjustCalci('${code}', 1, ${finalTotal})">+</button>
+          </td>
+          <td id="res75-${code}" class="calci-res">--</td>
+          <td id="res86-${code}" class="calci-res target-86">--</td>
+        `;
+        tbody.appendChild(tr);
+
+        // Initial Calculation
+        updateCalciRow(code, currentPresent, finalTotal);
+      }
+
+      document.getElementById('calciModal').style.display = 'block';
+    }
+
+    function updateCalciRow(code, presentVal, finalTotal) {
+      const present = parseInt(presentVal) || 0;
+
+      // Save to persistence
+      calciState[code] = present;
+      localStorage.setItem('lectrack_calci', JSON.stringify(calciState));
+
+      const targets = [75, 86];
+
+      targets.forEach(t => {
+        const threshold = t / 100;
+        const targetId = `res${t}-${code}`;
+        const el = document.getElementById(targetId);
+
+        const required = Math.ceil(threshold * finalTotal);
+        const diff = required - present;
+
+        if (diff <= 0) {
+          el.textContent = "✅ Met";
+          el.className = "calci-res met";
+        } else {
+          el.textContent = `${diff} more`;
+          el.className = t === 75 ? "calci-res needed" : "calci-res target-86";
+        }
+      });
+    }
+
+    function adjustCalci(code, delta, finalTotal) {
+      const input = document.getElementById(`input-${code}`);
+      let val = (parseInt(input.value) || 0) + delta;
+      if (val < 0) val = 0;
+      input.value = val;
+      updateCalciRow(code, val, finalTotal);
+    }
+
+    // CALENDAR LOGIC
+    function openCalendar() {
+      renderCalendar();
+      document.getElementById('calendarModal').style.display = 'block';
+    }
+
+    function renderCalendar() {
+      const months = [
+        { month: 3, year: 2026 }, // April
+        { month: 4, year: 2026 }, // May
+        { month: 5, year: 2026 }  // June
+      ];
+
+      let html = '<div class="calendar-container">';
+      months.forEach(m => {
+        html += generateMonthHTML(m.month, m.year);
+      });
+      html += '</div>';
+
+      document.getElementById('calendarContent').innerHTML = html;
+    }
+
+    function generateMonthHTML(month, year) {
+      const date = new Date(year, month, 1);
+      const monthName = date.toLocaleString('en-GB', { month: 'long' });
+      const firstDayRaw = date.getDay(); // 0=Sun, 1=Mon...
+      // New Order: Mon(0), Tue(1), Wed(2), Thu(3), Fri(4), Sat(5), Sun(6)
+      const firstDay = (firstDayRaw === 0) ? 6 : firstDayRaw - 1;
+      
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+      let html = `<div class="month-box">
+        <div class="month-name">${monthName} ${year}</div>
+        <div class="calendar-grid">
+          ${dayNames.map(d => `<div class="day-header">${d}</div>`).join('')}`;
+
+      // Empty slots before first day
+      for (let i = 0; i < firstDay; i++) {
+        html += '<div></div>';
+      }
+
+      // Days of the month
+      const now = new Date();
+      const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const current = new Date(year, month, d);
+        let { type, label } = getDayType(current);
+        const classes = ['cal-day'];
+
+        // Precise Status Check
+        const isPast = current < todayAtMidnight;
+        const isToday = current.getTime() === todayAtMidnight.getTime();
+        const isExam = type && type !== 'holiday';
+
+        let isFinished = isPast;
+        if (isToday && isExam) {
+          const specificEndTime = getLatestExamEndTime(d, month);
+          if (specificEndTime) {
+            isFinished = now > specificEndTime;
+          } else {
+            isFinished = now.getHours() >= 17; // Default fallback
+          }
+        }
+
+        if (isFinished && isExam && type !== 'mse') {
+          classes.push('completed');
+          label = '✓ ' + label;
+        }
+
+        if (type) classes.push(type);
+
+        html += `<div class="${classes.join(' ')}">
+          ${d}
+          ${label ? `<span class="day-label">${label}</span>` : ''}
+        </div>`;
+      }
+
+      html += '</div></div>';
+      return html;
+    }
+
+    function getDayType(date) {
+      const y = date.getFullYear();
+      const m = date.getMonth(); // 0-indexed
+      const d = date.getDate();
+      const day = date.getDay(); // 0 is Sunday, 6 is Saturday
+
+      // 1. Specific ESE overrides (May 23, 30 are Saturdays)
+      if (m === 4 && (d === 23 || d === 30)) {
+        return { type: 'ese', label: 'ESE' };
+      }
+
+      // 2. Holiday (Sundays for April, Sat/Sun for May/June)
+      if (m === 3) { // April
+        if (day === 0) return { type: 'holiday', label: '' };
+      } else if (m === 4 || m === 5) { // May or June
+        if (day === 0 || day === 6) return { type: 'holiday', label: '' };
+      }
+
+      // 3. Specific Holidays
+      if (m === 3 && d === 22) return { type: 'holiday', label: 'H' }; // 22 April
+      if (m === 4 && d === 16) return { type: 'holiday', label: 'H' }; // 16 May
+      if (m === 4 && d === 27) return { type: 'holiday', label: 'H' }; // 27 May
+
+      // 4. MSE (20-28 April)
+      if (m === 3 && d >= 20 && d <= 28) {
+        return { type: 'mse', label: 'MSE' };
+      }
+
+      // 5. Practical Exam (1-5 June)
+      if (m === 5 && d >= 1 && d <= 5) {
+        return { type: 'practical', label: 'Prac' };
+      }
+
+      // 6. ESE Exam (Ends 5 June)
+      // Range: 15 May to 5 June
+      const eseStart = new Date(2026, 4, 15);
+      const eseEnd = new Date(2026, 5, 5);
+      if (date >= eseStart && date <= eseEnd) {
+        return { type: 'ese', label: 'ESE' };
+      }
+
+      return { type: '', label: '' };
+    }
+
+    // BUTTON
+    function openAttendance() {
+      window.open("https://cybervidya.pages.dev/");
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function (event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+      }
+    }
+  </script>
+
+</body>
+
+</html>
