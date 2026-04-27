@@ -452,6 +452,41 @@
       letter-spacing: 0.5px;
     }
 
+    /* DATE SHEET TOGGLE */
+    .ds-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin: -5px auto 20px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 5px;
+      border-radius: 12px;
+      width: fit-content;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ds-toggle label {
+      padding: 6px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 800;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .ds-toggle input[type="radio"] {
+      display: none;
+    }
+
+    .ds-toggle input[type="radio"]:checked + label {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+    }
+
     /* MULTI-COURSE CALCULATOR STYLES */
     .calci-container {
       max-height: 65vh;
@@ -892,7 +927,7 @@
       } catch (e) { return null; }
     }
 
-    function isMseItemCompleted(item) {
+    function isExamItemCompleted(item) {
       if (!item.date || !item.time) return false;
       const now = new Date();
       const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -965,6 +1000,20 @@
       { date: "27 April (Mon)", subject: "Data Analytics", time: "10:00 AM - 12:00 PM" },
       { date: "28 April (Tue)", subject: "DAA", time: "10:00 AM - 12:00 PM" }
     ];
+
+    const eseData = [
+      { date: "15 May (Fri)", subject: "Data Analytics", time: "09:30 AM - 12:30 PM" },
+      { date: "18 May (Mon)", subject: "Computer Networks", time: "09:30 AM - 12:30 PM" },
+      { date: "20 May (Wed)", subject: "ANN and Machine Learning", time: "09:30 AM - 12:30 PM" },
+      { date: "22 May (Fri)", subject: "Design and Analysis of Algorithms", time: "09:30 AM - 04:30 PM" },
+      { date: "23 May (Sat)", subject: "Aptitude-2", time: "09:30 AM - 11:30 AM" },
+      { date: "25 May (Mon)", subject: "Professional Elective", time: "09:30 AM - 12:30 PM" },
+      { date: "26 May (Tue)", subject: "Universal Human Values", time: "09:30 AM - 12:30 PM" },
+      { date: "28 May (Thu)", subject: "Web Technology", time: "09:30 AM - 04:30 PM" },
+      { date: "29 May (Fri)", subject: "Soft Skills Essential-2", time: "09:30 AM - 04:30 PM" }
+    ];
+
+    let activeDateSheetType = 'mse2';
 
     // CA DATA
     const caData = [
@@ -1178,14 +1227,34 @@
 
     // DATE SHEET VIEW
     function openDateSheet() {
-      let html = renderMSE2();
+      let html = renderDateSheet();
       document.getElementById("dateSheetContent").innerHTML = html;
       document.getElementById("dateSheetModal").style.display = "block";
     }
 
-    // MSE 2 RENDER
-    function renderMSE2() {
-      let html = `<div class="mse-header">📑 <span class="shimmer-title">MSE 2 Date Sheet</span></div>
+    // SWITCH HANDLER
+    function switchDateSheet(type) {
+      activeDateSheetType = type;
+      const content = document.getElementById("dateSheetContent");
+      // Add a small fade effect via class if desired, but simple re-render for now
+      content.innerHTML = renderDateSheet();
+    }
+
+    // DATE SHEET RENDER
+    function renderDateSheet() {
+      const data = activeDateSheetType === 'mse2' ? mse2Data : eseData;
+      const title = activeDateSheetType === 'mse2' ? 'MSE 2 Date Sheet' : 'ESE Date Sheet';
+
+      let html = `
+        <div class="ds-toggle">
+          <input type="radio" id="mse2-opt" name="ds-type" value="mse2" ${activeDateSheetType === 'mse2' ? 'checked' : ''} onchange="switchDateSheet('mse2')">
+          <label for="mse2-opt">MSE 2</label>
+          
+          <input type="radio" id="ese-opt" name="ds-type" value="ese" ${activeDateSheetType === 'ese' ? 'checked' : ''} onchange="switchDateSheet('ese')">
+          <label for="ese-opt">ESE</label>
+        </div>
+
+        <div class="mse-header">📑 <span class="shimmer-title">${title}</span></div>
         <table class="tt-table mse-table">
           <thead>
             <tr>
@@ -1196,39 +1265,41 @@
           </thead>
           <tbody>`;
 
-      mse2Data.forEach(item => {
-        const isCompleted = isMseItemCompleted(item);
+      data.forEach(item => {
+        const isCompleted = isExamItemCompleted(item);
         const rowClass = isCompleted ? 'class="completed-row"' : (item.highlight ? 'class="highlight-row"' : '');
-        const badge = isCompleted ? '<span class="completed-badge" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); margin: 0;">COMPLETED</span>' : (item.highlight ? '<span class="highlight-badge">Special</span>' : '');
+        const badgeToken = isCompleted ? '<span class="completed-badge" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); margin: 0;">COMPLETED</span>' : (item.highlight ? '<span class="highlight-badge">Special</span>' : '');
         
         html += `<tr ${rowClass}>
           <td style="font-weight:700;">${item.date}</td>
           <td>${item.subject}</td>
           <td style="position: relative;">
             ${item.time}
-            ${badge}
+            ${badgeToken}
           </td>
         </tr>`;
       });
 
       html += `</tbody></table>`;
 
-      // CA Section
-      html += `
-        <div class="ca-section">
-          <div class="mse-header" style="font-size:1.1rem; margin-top:5px;">📝 <span class="shimmer-title">Continuous Assessment</span></div>
-          <div class="ca-grid">
-            ${caData.map(item => `
-              <div class="ca-card" ${item.status === 'Completed' ? 'style="border-color: #10b981; background: rgba(16, 185, 129, 0.1);"' : ''}>
-                <div class="ca-date" ${item.status === 'Completed' ? 'style="color: #10b981;"' : ''}>${item.date}</div>
-                <div class="ca-sub">${item.subject}</div>
-                ${item.time ? `<div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${item.time}</div>` : ''}
-                ${item.status === 'Completed' ? '<div style="font-size: 0.6rem; color: #10b981; font-weight: 800; margin-top: 4px; letter-spacing: 0.5px;">✓ COMPLETED</div>' : ''}
-              </div>
-            `).join('')}
+      // CA Section (Only show for MSE 2 or as a separate section)
+      if (activeDateSheetType === 'mse2') {
+        html += `
+          <div class="ca-section">
+            <div class="mse-header" style="font-size:1.1rem; margin-top:5px;">📝 <span class="shimmer-title">Continuous Assessment</span></div>
+            <div class="ca-grid">
+              ${caData.map(item => `
+                <div class="ca-card" ${item.status === 'Completed' ? 'style="border-color: #10b981; background: rgba(16, 185, 129, 0.1);"' : ''}>
+                  <div class="ca-date" ${item.status === 'Completed' ? 'style="color: #10b981;"' : ''}>${item.date}</div>
+                  <div class="ca-sub">${item.subject}</div>
+                  ${item.time ? `<div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${item.time}</div>` : ''}
+                  ${item.status === 'Completed' ? '<div style="font-size: 0.6rem; color: #10b981; font-weight: 800; margin-top: 4px; letter-spacing: 0.5px;">✓ COMPLETED</div>' : ''}
+                </div>
+              `).join('')}
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
 
       return html;
     }
