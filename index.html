@@ -349,6 +349,7 @@
       width: 100%;
       border-collapse: separate;
       border-spacing: 0 4px;
+      font-size: 0.95rem;
     }
 
     .tt-table th {
@@ -411,11 +412,16 @@
 
     /* MSE / DATE SHEET STYLES */
     .mse-header {
-      margin: 10px 0 5px;
+      font-size: 1.45rem;
+      font-weight: 900;
       text-align: center;
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
       color: white;
     }
 
@@ -474,10 +480,10 @@
       padding: 10px 28px;
       border-radius: 50px;
       cursor: pointer;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 900;
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      color: rgba(255, 255, 255, 0.4);
+      color: rgba(255, 255, 255, 0.8);
       text-transform: uppercase;
       letter-spacing: 1.5px;
       position: relative;
@@ -490,25 +496,29 @@
 
     .ds-toggle input[type="radio"]:checked + label {
       background: var(--accent);
-      color: #000;
+      color: #ffffff;
       box-shadow: 0 0 25px rgba(0, 242, 255, 0.6);
-      transform: scale(1.02);
+      transform: scale(1.05);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      text-shadow: 0 0 5px rgba(0,0,0,0.5);
     }
 
     .ds-toggle label:hover {
-      color: rgba(0, 242, 255, 0.8);
+      color: #ffffff;
+      text-shadow: 0 0 10px var(--accent);
     }
 
     .tentative-label {
       color: #ff4757;
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       font-weight: 900;
-      text-align: center;
-      margin: -10px auto 15px;
+      text-align: right;
+      margin: -15px 15px 15px auto;
       letter-spacing: 1px;
       text-transform: uppercase;
       animation: pulse-red 2s infinite;
       display: block;
+      width: fit-content;
     }
 
     @keyframes pulse-red {
