@@ -452,29 +452,36 @@
       letter-spacing: 0.5px;
     }
 
-    /* DATE SHEET TOGGLE */
-    .ds-toggle {
+    /* PREMIUM DATE SHEET TOGGLE */
+    .ds-toggle-container {
       display: flex;
       justify-content: center;
-      gap: 5px;
-      margin: -5px auto 20px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 5px;
-      border-radius: 12px;
-      width: fit-content;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 25px;
+    }
+
+    .ds-toggle {
+      display: inline-flex;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 4px;
+      border-radius: 50px;
+      border: 1px solid rgba(0, 242, 255, 0.3);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      position: relative;
     }
 
     .ds-toggle label {
-      padding: 6px 18px;
-      border-radius: 8px;
+      padding: 10px 28px;
+      border-radius: 50px;
       cursor: pointer;
       font-size: 0.75rem;
-      font-weight: 800;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      color: rgba(255, 255, 255, 0.5);
+      font-weight: 900;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      color: rgba(255, 255, 255, 0.4);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      position: relative;
+      z-index: 1;
     }
 
     .ds-toggle input[type="radio"] {
@@ -484,7 +491,30 @@
     .ds-toggle input[type="radio"]:checked + label {
       background: var(--accent);
       color: #000;
-      box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+      box-shadow: 0 0 25px rgba(0, 242, 255, 0.6);
+      transform: scale(1.02);
+    }
+
+    .ds-toggle label:hover {
+      color: rgba(0, 242, 255, 0.8);
+    }
+
+    .tentative-label {
+      color: #ff4757;
+      font-size: 0.65rem;
+      font-weight: 900;
+      text-align: center;
+      margin: -10px auto 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      animation: pulse-red 2s infinite;
+      display: block;
+    }
+
+    @keyframes pulse-red {
+      0% { opacity: 0.6; transform: scale(0.98); }
+      50% { opacity: 1; transform: scale(1.02); }
+      100% { opacity: 0.6; transform: scale(0.98); }
     }
 
     /* MULTI-COURSE CALCULATOR STYLES */
@@ -1246,15 +1276,18 @@
       const title = activeDateSheetType === 'mse2' ? 'MSE 2 Date Sheet' : 'ESE Date Sheet';
 
       let html = `
-        <div class="ds-toggle">
-          <input type="radio" id="mse2-opt" name="ds-type" value="mse2" ${activeDateSheetType === 'mse2' ? 'checked' : ''} onchange="switchDateSheet('mse2')">
-          <label for="mse2-opt">MSE 2</label>
-          
-          <input type="radio" id="ese-opt" name="ds-type" value="ese" ${activeDateSheetType === 'ese' ? 'checked' : ''} onchange="switchDateSheet('ese')">
-          <label for="ese-opt">ESE</label>
+        <div class="ds-toggle-container">
+          <div class="ds-toggle">
+            <input type="radio" id="mse2-opt" name="ds-type" value="mse2" ${activeDateSheetType === 'mse2' ? 'checked' : ''} onchange="switchDateSheet('mse2')">
+            <label for="mse2-opt">MSE 2</label>
+            
+            <input type="radio" id="ese-opt" name="ds-type" value="ese" ${activeDateSheetType === 'ese' ? 'checked' : ''} onchange="switchDateSheet('ese')">
+            <label for="ese-opt">ESE</label>
+          </div>
         </div>
 
         <div class="mse-header">📑 <span class="shimmer-title">${title}</span></div>
+        ${activeDateSheetType === 'ese' ? '<span class="tentative-label">* Tentative Schedule</span>' : ''}
         <table class="tt-table mse-table">
           <thead>
             <tr>
