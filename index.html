@@ -458,56 +458,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* PREMIUM DATE SHEET TOGGLE */
-    .ds-toggle-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 25px;
-    }
-
-    .ds-toggle {
-      display: inline-flex;
-      background: rgba(15, 23, 42, 0.8);
-      padding: 4px;
-      border-radius: 50px;
-      border: 1px solid rgba(0, 242, 255, 0.3);
-      backdrop-filter: blur(15px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      position: relative;
-    }
-
-    .ds-toggle label {
-      padding: 10px 28px;
-      border-radius: 50px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 900;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      color: rgba(255, 255, 255, 0.8);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .ds-toggle input[type="radio"] {
-      display: none;
-    }
-
-    .ds-toggle input[type="radio"]:checked + label {
-      background: var(--accent);
-      color: #ffffff;
-      box-shadow: 0 0 25px rgba(0, 242, 255, 0.6);
-      transform: scale(1.05);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      text-shadow: 0 0 5px rgba(0,0,0,0.5);
-    }
-
-    .ds-toggle label:hover {
-      color: #ffffff;
-      text-shadow: 0 0 10px var(--accent);
-    }
-
     .tentative-label {
       color: #ff4757;
       font-size: 0.7rem;
@@ -991,7 +941,7 @@
       const monStr = GLOBAL_MONTH_NAMES[month].toLowerCase();
       let latest = null;
 
-      mse2Data.forEach(item => {
+      eseData.forEach(item => {
         if (!item.date) return;
         const lowerDate = item.date.toLowerCase();
         if (lowerDate.startsWith(day + " ") && lowerDate.includes(monStr)) {
@@ -1029,18 +979,6 @@
       5: ["IT202B", "IT202B", "HS114L", "CS401L", "IT202B", "CS303B", "PE", "PE"]
     };
 
-    // MSE 2 DATA
-    const mse2Data = [
-      { date: "20 April (Mon)", subject: "Web Technology", time: "10:00 AM - 12:00 PM" },
-      { date: "21 April (Tue)", subject: "ANN & ML", time: "10:00 AM - 12:00 PM" },
-      { date: "23 April (Thu)", subject: "CN", time: "10:00 AM - 12:00 PM" },
-      { date: "24 April (Fri)", subject: "Professional Elective", time: "02:00 PM - 04:00 PM" },
-      { date: "25 April (Sat)", subject: "UHV", time: "10:00 AM - 12:00 PM" },
-      { date: "25 April (Sat)", subject: "Aptitude -2", time: "01:30 PM - 02:30 PM" },
-      { date: "27 April (Mon)", subject: "Data Analytics", time: "10:00 AM - 12:00 PM" },
-      { date: "28 April (Tue)", subject: "DAA", time: "10:00 AM - 12:00 PM" }
-    ];
-
     const eseData = [
       { date: "15 May (Fri)", subject: "Data Analytics", time: "09:30 AM - 12:30 PM" },
       { date: "18 May (Mon)", subject: "Computer Networks", time: "09:30 AM - 12:30 PM" },
@@ -1051,17 +989,6 @@
       { date: "26 May (Tue)", subject: "Universal Human Values", time: "09:30 AM - 12:30 PM" },
       { date: "28 May (Thu)", subject: "Web Technology", time: "09:30 AM - 04:30 PM" },
       { date: "29 May (Fri)", subject: "Soft Skills Essential-2", time: "09:30 AM - 04:30 PM" }
-    ];
-
-    let activeDateSheetType = 'mse2';
-
-    // CA DATA
-    const caData = [
-      { date: "15 April", subject: "DAA Theory & Lab", time: "11:40 am - 12:30 pm", status: "Completed" },
-      { date: "15 April", subject: "WT", time: "Subit certificates before 15 April",status:"Completed" },
-      { date: "16 April", subject: "ANN & ML", time: "10:50 am onwards",status:"Completed" },
-      { date: "17 April", subject: "DA", time: "11:40 am - 12:30pm " ,status:"Completed" },
-      { date: "17 April", subject: "AWS (Proff. Elective)", time: "3:10 pm onwards" ,status:"Completed" }
     ];
 
     // HOLIDAYS
@@ -1272,32 +1199,11 @@
       document.getElementById("dateSheetModal").style.display = "block";
     }
 
-    // SWITCH HANDLER
-    function switchDateSheet(type) {
-      activeDateSheetType = type;
-      const content = document.getElementById("dateSheetContent");
-      // Add a small fade effect via class if desired, but simple re-render for now
-      content.innerHTML = renderDateSheet();
-    }
-
     // DATE SHEET RENDER
     function renderDateSheet() {
-      const data = activeDateSheetType === 'mse2' ? mse2Data : eseData;
-      const title = activeDateSheetType === 'mse2' ? 'MSE 2 Date Sheet' : 'ESE Date Sheet';
-
       let html = `
-        <div class="ds-toggle-container">
-          <div class="ds-toggle">
-            <input type="radio" id="mse2-opt" name="ds-type" value="mse2" ${activeDateSheetType === 'mse2' ? 'checked' : ''} onchange="switchDateSheet('mse2')">
-            <label for="mse2-opt">MSE 2</label>
-            
-            <input type="radio" id="ese-opt" name="ds-type" value="ese" ${activeDateSheetType === 'ese' ? 'checked' : ''} onchange="switchDateSheet('ese')">
-            <label for="ese-opt">ESE</label>
-          </div>
-        </div>
-
-        <div class="mse-header">📑 <span class="shimmer-title">${title}</span></div>
-        ${activeDateSheetType === 'ese' ? '<span class="tentative-label">* Tentative Schedule</span>' : ''}
+        <div class="mse-header">📑 <span class="shimmer-title">ESE Date Sheet</span></div>
+        <span class="tentative-label">* Tentative Schedule</span>
         <table class="tt-table mse-table">
           <thead>
             <tr>
@@ -1308,7 +1214,7 @@
           </thead>
           <tbody>`;
 
-      data.forEach(item => {
+      eseData.forEach(item => {
         const isCompleted = isExamItemCompleted(item);
         const rowClass = isCompleted ? 'class="completed-row"' : (item.highlight ? 'class="highlight-row"' : '');
         const badgeToken = isCompleted ? '<span class="completed-badge" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); margin: 0;">COMPLETED</span>' : (item.highlight ? '<span class="highlight-badge">Special</span>' : '');
@@ -1324,25 +1230,6 @@
       });
 
       html += `</tbody></table>`;
-
-      // CA Section (Only show for MSE 2 or as a separate section)
-      if (activeDateSheetType === 'mse2') {
-        html += `
-          <div class="ca-section">
-            <div class="mse-header" style="font-size:1.1rem; margin-top:5px;">📝 <span class="shimmer-title">Continuous Assessment</span></div>
-            <div class="ca-grid">
-              ${caData.map(item => `
-                <div class="ca-card" ${item.status === 'Completed' ? 'style="border-color: #10b981; background: rgba(16, 185, 129, 0.1);"' : ''}>
-                  <div class="ca-date" ${item.status === 'Completed' ? 'style="color: #10b981;"' : ''}>${item.date}</div>
-                  <div class="ca-sub">${item.subject}</div>
-                  ${item.time ? `<div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${item.time}</div>` : ''}
-                  ${item.status === 'Completed' ? '<div style="font-size: 0.6rem; color: #10b981; font-weight: 800; margin-top: 4px; letter-spacing: 0.5px;">✓ COMPLETED</div>' : ''}
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      }
 
       return html;
     }
