@@ -1245,9 +1245,13 @@
       const tbody = document.getElementById('calciBody');
       tbody.innerHTML = '';
 
+      const fullFuture = fullFutureCounts();
+      const remainFuture = remainingCounts();
+
       for (let code in subjects) {
         let past = pastData[code] || { present: 0, total: 0 };
         let finalTotal = past.total + (fullFuture[code] || 0);
+        let occurred = finalTotal - (remainFuture[code] || 0);
 
         // Use persisted value if available, else fallback to system data
         let currentPresent = calciState[code] !== undefined ? calciState[code] : past.present;
@@ -1260,10 +1264,10 @@
             ${code === 'PE' ? '<span class="pe-disclaimer">Structure may vary</span>' : ''}
           </td>
           <td class="calci-control">
-            <button class="step-btn" onclick="adjustCalci('${code}', -1, ${finalTotal})">−</button>
+            <button class="step-btn" onclick="adjustCalci('${code}', -1, ${finalTotal}, ${occurred})">−</button>
             <input type="number" id="input-${code}" class="calci-input" value="${currentPresent}" 
-                   oninput="updateCalciRow('${code}', this.value, ${finalTotal})">
-            <button class="step-btn" onclick="adjustCalci('${code}', 1, ${finalTotal})">+</button>
+                   oninput="updateCalciRow('${code}', this.value, ${finalTotal}, ${occurred})">
+            <button class="step-btn" onclick="adjustCalci('${code}', 1, ${finalTotal}, ${occurred})">+</button>
             <span id="pct-${code}" style="font-size: 0.7rem; color: #10b981; min-width: 40px; text-align: right; font-weight: 700;"></span>
           </td>
           <td id="res75-${code}" class="calci-res">--</td>
@@ -1272,13 +1276,13 @@
         tbody.appendChild(tr);
 
         // Initial Calculation
-        updateCalciRow(code, currentPresent, finalTotal);
+        updateCalciRow(code, currentPresent, finalTotal, occurred);
       }
 
       document.getElementById('calciModal').style.display = 'block';
     }
 
-    function updateCalciRow(code, presentVal, finalTotal) {
+    function updateCalciRow(code, presentVal, finalTotal, occurred) {
       const present = parseInt(presentVal) || 0;
 
       // Save to persistence
@@ -1305,10 +1309,9 @@
       });
 
       // Individual Percentage
-      const pastTotal = pastData[code] ? pastData[code].total : 0;
       const pctEl = document.getElementById(`pct-${code}`);
-      if (pctEl && pastTotal > 0) {
-        const pctValue = (present / pastTotal) * 100;
+      if (pctEl && occurred > 0) {
+        const pctValue = (present / occurred) * 100;
         pctEl.textContent = `${pctValue.toFixed(1)}%`;
         pctEl.style.color = pctValue >= 75 ? "#10b981" : "#ef4444";
       }
@@ -1318,28 +1321,38 @@
 
     function updateOverallAttendance() {
       let totalPresent = 0;
-      let totalClasses = 0;
+      let totalOccurred = 0;
+      
+      const fullFuture = fullFutureCounts();
+      const remainFuture = remainingCounts();
+      
       for (let code in subjects) {
         let past = pastData[code];
-        if (past && past.total > 0) {
-          totalClasses += past.total;
-          totalPresent += (calciState[code] !== undefined ? calciState[code] : past.present);
+        if (past) {
+          let finalTotal = past.total + (fullFuture[code] || 0);
+          let occurred = finalTotal - (remainFuture[code] || 0);
+          
+          if (occurred > 0) {
+            totalOccurred += occurred;
+            totalPresent += (calciState[code] !== undefined ? calciState[code] : past.present);
+          }
         }
       }
+      
       const el = document.getElementById('overall-attendance');
-      if (el && totalClasses > 0) {
-        const pctValue = (totalPresent / totalClasses) * 100;
+      if (el && totalOccurred > 0) {
+        const pctValue = (totalPresent / totalOccurred) * 100;
         const color = pctValue >= 75 ? '#10b981' : '#ef4444';
         el.innerHTML = `Overall Attendance: <span style="color: ${color}">${pctValue.toFixed(2)}%</span>`;
       }
     }
 
-    function adjustCalci(code, delta, finalTotal) {
+    function adjustCalci(code, delta, finalTotal, occurred) {
       const input = document.getElementById(`input-${code}`);
       let val = (parseInt(input.value) || 0) + delta;
       if (val < 0) val = 0;
       input.value = val;
-      updateCalciRow(code, val, finalTotal);
+      updateCalciRow(code, val, finalTotal, occurred);
     }
 
     // CALENDAR LOGIC
