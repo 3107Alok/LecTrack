@@ -855,9 +855,10 @@
       <span class="close-btn" onclick="closeModal('calciModal')">✖</span>
       <h2 style="text-align: center; margin-bottom: 5px; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px;">
         🧮 <span class="shimmer-title">Attendance Calci</span></h2>
-      <p style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 20px; font-weight: 500;">
+      <p style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 15px; font-weight: 500;">
         Enter ur current present counts to see how many more lectures you need to attend.
       </p>
+      <div id="overall-attendance" style="text-align: center; margin-bottom: 15px; font-weight: 800; font-size: 1rem; color: white;">Overall Attendance: --%</div>
       <div class="calci-container">
         <table class="calci-table">
           <thead>
@@ -1263,6 +1264,7 @@
             <input type="number" id="input-${code}" class="calci-input" value="${currentPresent}" 
                    oninput="updateCalciRow('${code}', this.value, ${finalTotal})">
             <button class="step-btn" onclick="adjustCalci('${code}', 1, ${finalTotal})">+</button>
+            <span id="pct-${code}" style="font-size: 0.7rem; color: #10b981; min-width: 40px; text-align: right; font-weight: 700;"></span>
           </td>
           <td id="res75-${code}" class="calci-res">--</td>
           <td id="res86-${code}" class="calci-res target-86">--</td>
@@ -1301,6 +1303,35 @@
           el.className = t === 75 ? "calci-res needed" : "calci-res target-86";
         }
       });
+
+      // Individual Percentage
+      const pastTotal = pastData[code] ? pastData[code].total : 0;
+      const pctEl = document.getElementById(`pct-${code}`);
+      if (pctEl && pastTotal > 0) {
+        const pctValue = (present / pastTotal) * 100;
+        pctEl.textContent = `${pctValue.toFixed(1)}%`;
+        pctEl.style.color = pctValue >= 75 ? "#10b981" : "#ef4444";
+      }
+
+      updateOverallAttendance();
+    }
+
+    function updateOverallAttendance() {
+      let totalPresent = 0;
+      let totalClasses = 0;
+      for (let code in subjects) {
+        let past = pastData[code];
+        if (past && past.total > 0) {
+          totalClasses += past.total;
+          totalPresent += (calciState[code] !== undefined ? calciState[code] : past.present);
+        }
+      }
+      const el = document.getElementById('overall-attendance');
+      if (el && totalClasses > 0) {
+        const pctValue = (totalPresent / totalClasses) * 100;
+        const color = pctValue >= 75 ? '#10b981' : '#ef4444';
+        el.innerHTML = `Overall Attendance: <span style="color: ${color}">${pctValue.toFixed(2)}%</span>`;
+      }
     }
 
     function adjustCalci(code, delta, finalTotal) {
