@@ -1040,11 +1040,12 @@
       return counts;
     }
 
-    // ⭐ REMAINING (dynamic) — counts periods, includes today
+    // ⭐ REMAINING (dynamic) — counts periods, includes today, updates based on time
     function remainingCounts() {
       let counts = {};
 
-      let current = new Date(today); // includes today
+      let current = new Date(today); // includes today (midnight)
+      let now = new Date();
 
       while (current <= endDate) {
         let d = current.getDay();
@@ -1053,9 +1054,28 @@
           let classes = timetable[d];
 
           if (classes) {
-            classes.forEach(sub => {
-              counts[sub] = (counts[sub] || 0) + 1;
-            });
+            if (current.getTime() === today.getTime()) {
+              // Current day logic: only count classes that haven't occurred yet today based on time
+              const periodEndTimes = [
+                {h: 10, m: 0}, {h: 10, m: 50}, {h: 11, m: 40}, {h: 12, m: 30}, // Before Lunch
+                {h: 14, m: 20}, {h: 15, m: 10}, {h: 16, m: 0}, {h: 16, m: 50}  // After Lunch
+              ];
+              const currentH = now.getHours();
+              const currentM = now.getMinutes();
+              const currentTime = currentH * 60 + currentM;
+
+              for (let i = 0; i < classes.length; i++) {
+                const end = periodEndTimes[i].h * 60 + periodEndTimes[i].m;
+                if (currentTime < end) {
+                  counts[classes[i]] = (counts[classes[i]] || 0) + 1;
+                }
+              }
+            } else {
+              // Future days
+              classes.forEach(sub => {
+                counts[sub] = (counts[sub] || 0) + 1;
+              });
+            }
           }
         }
 
@@ -1265,8 +1285,11 @@
           </td>
           <td class="calci-control">
             <button class="step-btn" onclick="adjustCalci('${code}', -1, ${finalTotal}, ${occurred})">−</button>
-            <input type="number" id="input-${code}" class="calci-input" value="${currentPresent}" 
-                   oninput="updateCalciRow('${code}', this.value, ${finalTotal}, ${occurred})">
+            <div style="display: flex; align-items: baseline; gap: 4px;">
+              <input type="number" id="input-${code}" class="calci-input" value="${currentPresent}" 
+                     oninput="updateCalciRow('${code}', this.value, ${finalTotal}, ${occurred})" style="width: 45px; padding: 6px 4px;">
+              <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 800; min-width: 25px;">/ ${occurred}</span>
+            </div>
             <button class="step-btn" onclick="adjustCalci('${code}', 1, ${finalTotal}, ${occurred})">+</button>
             <span id="pct-${code}" style="font-size: 0.7rem; color: #10b981; min-width: 40px; text-align: right; font-weight: 700;"></span>
           </td>
