@@ -56,14 +56,27 @@
     }
 
     @keyframes gradientShine {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 200% 50%;
+      }
     }
 
     @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-4px); }
-      100% { transform: translateY(0px); }
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-4px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
     }
 
     @keyframes fadeInUp {
@@ -71,6 +84,7 @@
         opacity: 0;
         transform: translateY(25px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -472,9 +486,20 @@
     }
 
     @keyframes pulse-red {
-      0% { opacity: 0.6; transform: scale(0.98); }
-      50% { opacity: 1; transform: scale(1.02); }
-      100% { opacity: 0.6; transform: scale(0.98); }
+      0% {
+        opacity: 0.6;
+        transform: scale(0.98);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.02);
+      }
+
+      100% {
+        opacity: 0.6;
+        transform: scale(0.98);
+      }
     }
 
     /* MULTI-COURSE CALCULATOR STYLES */
@@ -790,7 +815,6 @@
     <button onclick="openCalendar()">Calendar</button>
     <button onclick="openDateSheet()">DateSheet</button>
     <button onclick="openPYQ()">PYQ / QB</button>
-    <button onclick="openPracTrack()">PracTrack</button>
   </div>
 
   <div style="display: flex; justify-content: center; margin: -10px auto 25px;">
@@ -845,7 +869,8 @@
   <div class="modal" id="calendarModal">
     <div class="modal-content" style="max-width: 1100px;">
       <span class="close-btn" onclick="closeModal('calendarModal')">✖</span>
-      <h2 style="text-align: center; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.5px;">📅 <span class="shimmer-title">Academic Calendar 2026</span></h2>
+      <h2 style="text-align: center; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.5px;">📅 <span
+          class="shimmer-title">Academic Calendar 2026</span></h2>
       <div id="calendarContent"></div>
     </div>
   </div>
@@ -856,10 +881,12 @@
       <span class="close-btn" onclick="closeModal('calciModal')">✖</span>
       <h2 style="text-align: center; margin-bottom: 5px; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px;">
         🧮 <span class="shimmer-title">Attendance Calci</span></h2>
-            <p style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 15px; font-weight: 500;">
+      <p style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 15px; font-weight: 500;">
         Enter Currrent Present Counts.Total Lecutres Count Changes according to TimeTable.
       </p>
-      <div id="overall-attendance" style="text-align: center; margin-bottom: 15px; font-weight: 800; font-size: 1rem; color: white;">Overall Attendance: --%</div>
+      <div id="overall-attendance"
+        style="text-align: center; margin-bottom: 15px; font-weight: 800; font-size: 1rem; color: white;">Overall
+        Attendance: --%</div>
       <div class="calci-container">
         <table class="calci-table">
           <thead>
@@ -880,37 +907,23 @@
 
   <!-- PYQ MODAL -->
   <div class="modal" id="pyqModal">
-    <div class="modal-content" style="max-width: 1200px; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
-      <div style="background: rgba(15, 25, 30, 0.95); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-        <span style="font-weight: 800; color: var(--accent-teal); font-size: 1.1rem; letter-spacing: 0.5px;">📚 PYQ / QB</span>
-        <span class="close-btn" style="position: static; width: 35px; height: 35px; background: rgba(239, 68, 68, 0.1); color: #ef4444;" onclick="closeModal('pyqModal')">✖</span>
+    <div class="modal-content"
+      style="max-width: 1200px; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+      <div
+        style="background: rgba(15, 25, 30, 0.95); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+        <span style="font-weight: 800; color: var(--accent-teal); font-size: 1.1rem; letter-spacing: 0.5px;">📚 PYQ /
+          QB</span>
+        <span class="close-btn"
+          style="position: static; width: 35px; height: 35px; background: rgba(239, 68, 68, 0.1); color: #ef4444;"
+          onclick="closeModal('pyqModal')">✖</span>
       </div>
-      <iframe 
-        src="https://3107alok.github.io/LecTrack-PYQ/"
+      <iframe src="https://3107alok.github.io/LecTrack-PYQ/"
         style="width:100%; height:80vh; border:none; display: block;">
       </iframe>
     </div>
   </div>
 
-  <!-- PRACTRACK MODAL -->
-  <div class="modal" id="pracModal">
-    <div class="modal-content" style="max-width: 800px; padding: 20px;">
-      <span class="close-btn" onclick="closeModal('pracModal')">✖</span>
-      <h2 style="text-align: center; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.5px;">📘 <span class="shimmer-title">PracTrack</span></h2>
-
-      <div id="pracContent"></div>
-
-      <div style="margin-top:25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-        <div style="height:10px; background: rgba(255,255,255,0.05); border-radius:10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-          <div id="pracBar" style="height:10px; background: var(--accent-teal); width:0%; border-radius:10px; transition: width 0.4s ease;"></div>
-        </div>
-        <p id="pracText" style="text-align:center; margin-top:8px; font-size: 0.8rem; font-weight: 700; color: var(--text-dim);"></p>
-      </div>
-    </div>
-  </div>
-
   <script>
-    const API = "https://w8dac3s836.execute-api.ap-south-1.amazonaws.com";
 
     // SUBJECTS
     const subjects = {
@@ -934,7 +947,7 @@
       if (!timeStr || !timeStr.includes('-')) return null;
       try {
         const parts = timeStr.split("-");
-        const endPart = parts[1].trim(); 
+        const endPart = parts[1].trim();
         const match = endPart.match(/(\d+):(\d+)\s*(AM|PM)/i);
         if (!match) return null;
 
@@ -955,14 +968,14 @@
       if (!item.date || !item.time) return false;
       const now = new Date();
       const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      
+
       const parts = item.date.split(' ');
       const day = parseInt(parts[0]);
       const monthName = parts[1];
       const monthIdx = GLOBAL_MONTH_NAMES.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
-      
+
       const examDate = new Date(now.getFullYear(), monthIdx, day);
-      
+
       if (examDate < todayAtMidnight) return true;
       if (examDate.getTime() === todayAtMidnight.getTime()) {
         const endTime = parseExamTime(item.time, now);
@@ -1090,8 +1103,8 @@
             if (current.getTime() === today.getTime()) {
               // Current day logic: only count classes that haven't occurred yet today based on time
               const periodEndTimes = [
-                {h: 10, m: 0}, {h: 10, m: 50}, {h: 11, m: 40}, {h: 12, m: 30}, // Before Lunch
-                {h: 14, m: 20}, {h: 15, m: 10}, {h: 16, m: 0}, {h: 16, m: 50}  // After Lunch
+                { h: 10, m: 0 }, { h: 10, m: 50 }, { h: 11, m: 40 }, { h: 12, m: 30 }, // Before Lunch
+                { h: 14, m: 20 }, { h: 15, m: 10 }, { h: 16, m: 0 }, { h: 16, m: 50 }  // After Lunch
               ];
               const currentH = now.getHours();
               const currentM = now.getMinutes();
@@ -1272,7 +1285,7 @@
         const isCompleted = isExamItemCompleted(item);
         const rowClass = isCompleted ? 'class="completed-row"' : (item.highlight ? 'class="highlight-row"' : '');
         const badgeToken = isCompleted ? '<span class="completed-badge" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); margin: 0;">COMPLETED</span>' : (item.highlight ? '<span class="highlight-badge">Special</span>' : '');
-        
+
         html += `<tr ${rowClass}>
           <td style="font-weight:700;">${item.date}</td>
           <td>${item.subject}</td>
@@ -1382,16 +1395,16 @@
     function updateOverallAttendance() {
       let totalPercentageSum = 0;
       let validSubjectsCount = 0;
-      
+
       const fullFuture = fullFutureCounts();
       const remainFuture = remainingCounts();
-      
+
       for (let code in subjects) {
         let past = pastData[code];
         if (past) {
           let finalTotal = past.total + (fullFuture[code] || 0);
           let occurred = finalTotal - (remainFuture[code] || 0);
-          
+
           if (occurred > 0) {
             let present = calciState[code] !== undefined ? calciState[code] : past.present;
             let subjectPct = (present / occurred) * 100;
@@ -1400,7 +1413,7 @@
           }
         }
       }
-      
+
       const el = document.getElementById('overall-attendance');
       if (el && validSubjectsCount > 0) {
         const pctValue = totalPercentageSum / validSubjectsCount;
@@ -1445,7 +1458,7 @@
       const firstDayRaw = date.getDay(); // 0=Sun, 1=Mon...
       // New Order: Mon(0), Tue(1), Wed(2), Thu(3), Fri(4), Sat(5), Sun(6)
       const firstDay = (firstDayRaw === 0) ? 6 : firstDayRaw - 1;
-      
+
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -1543,87 +1556,6 @@
       }
 
       return { type: '', label: '' };
-    }
-
-    // PRACTRACK LOGIC
-    async function openPracTrack() {
-      document.getElementById("pracModal").style.display = "block";
-      document.getElementById("pracContent").innerHTML = "<div style='text-align:center; color: var(--text-dim);'>Loading...</div>";
-
-      try {
-        const res = await fetch(API + "/syllabus?year=2");
-        const data = await res.json();
-        renderPracTrack(data);
-      } catch (e) {
-        document.getElementById("pracContent").innerHTML = "<div style='text-align:center; color: #ef4444;'>Error loading data</div>";
-      }
-    }
-
-    function renderPracTrack(data) {
-      const container = document.getElementById("pracContent");
-      const grouped = {};
-
-      data.forEach(i => {
-        if (!grouped[i.subject_code]) {
-          grouped[i.subject_code] = { name: i.subject_name, units: [] };
-        }
-        grouped[i.subject_code].units.push({ no: i.unit_no, name: i.unit_name });
-      });
-
-      container.innerHTML = Object.keys(grouped).map(code => {
-        const sub = grouped[code];
-        return `
-          <div style="margin-bottom:15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px;">
-            <h3 style="margin: 0 0 10px 0; font-size: 0.95rem; color: var(--accent-teal); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">${sub.name}</h3>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-            ${sub.units.map(u => `
-              <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; color: white;">
-                <input type="checkbox" id="${code}_${u.no}" onchange="toggleUnit('${code}','${u.no}')" style="accent-color: var(--accent-teal); width: 16px; height: 16px;">
-                <span style="font-weight: 600;">Unit ${u.no}</span> - <span style="color: var(--text-dim);">${u.name}</span>
-              </label>
-            `).join("")}
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      loadSavedState();
-    }
-
-    function toggleUnit(subject, unitNo) {
-      let progress = JSON.parse(localStorage.getItem("progress")) || {};
-      if (!progress[subject]) progress[subject] = {};
-      progress[subject][unitNo] = !progress[subject][unitNo];
-      localStorage.setItem("progress", JSON.stringify(progress));
-      updateProgress();
-    }
-
-    function loadSavedState() {
-      const progress = JSON.parse(localStorage.getItem("progress")) || {};
-      Object.keys(progress).forEach(sub => {
-        Object.keys(progress[sub]).forEach(unit => {
-          const el = document.getElementById(`${sub}_${unit}`);
-          if (el) el.checked = progress[sub][unit];
-        });
-      });
-      updateProgress();
-    }
-
-    function updateProgress() {
-      const progress = JSON.parse(localStorage.getItem("progress")) || {};
-      let total = 0;
-      let done = 0;
-
-      Object.values(progress).forEach(units => {
-        Object.values(units).forEach(v => {
-          total++;
-          if (v) done++;
-        });
-      });
-
-      const percent = total ? Math.round((done / total) * 100) : 0;
-      document.getElementById("pracBar").style.width = percent + "%";
-      document.getElementById("pracText").innerText = `Progress: ${percent}%`;
     }
 
     // BUTTON
