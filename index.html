@@ -1143,7 +1143,9 @@
       let targetVal = targetNode ? targetNode.value : "75";
       let multiplier = targetVal === "86" ? 0.86 : 0.75;
 
-      for (let sub in subjects) {
+      const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
+
+      for (let sub of sortedSubjects) {
 
         let past = pastData[sub] || { present: 0, total: 0 };
 
@@ -1319,7 +1321,9 @@
       const fullFuture = fullFutureCounts();
       const remainFuture = remainingCounts();
 
-      for (let code in subjects) {
+      const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
+
+      for (let code of sortedSubjects) {
         let past = pastData[code] || { present: 0, total: 0 };
         let finalTotal = past.total + (fullFuture[code] || 0);
         let occurred = finalTotal - (remainFuture[code] || 0);
