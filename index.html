@@ -1397,8 +1397,8 @@
     }
 
     function updateOverallAttendance() {
-      let totalPercentageSum = 0;
-      let validSubjectsCount = 0;
+      let totalPresentAll = 0;
+      let totalOccurredAll = 0;
 
       const fullFuture = fullFutureCounts();
       const remainFuture = remainingCounts();
@@ -1411,16 +1411,15 @@
 
           if (occurred > 0) {
             let present = calciState[code] !== undefined ? calciState[code] : past.present;
-            let subjectPct = (present / occurred) * 100;
-            totalPercentageSum += subjectPct;
-            validSubjectsCount++;
+            totalPresentAll += present;
+            totalOccurredAll += occurred;
           }
         }
       }
 
       const el = document.getElementById('overall-attendance');
-      if (el && validSubjectsCount > 0) {
-        const pctValue = totalPercentageSum / validSubjectsCount;
+      if (el && totalOccurredAll > 0) {
+        const pctValue = (totalPresentAll / totalOccurredAll) * 100;
         const color = pctValue >= 75 ? '#10b981' : '#ef4444';
         el.innerHTML = `Overall Attendance: <span style="color: ${color}">${pctValue.toFixed(2)}%</span>`;
       }
