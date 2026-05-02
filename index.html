@@ -789,7 +789,7 @@
     <button onclick="openTimeTable()">Time-Table</button>
     <button onclick="openCalendar()">Calendar</button>
     <button onclick="openDateSheet()">DateSheet</button>
-    <button onclick="window.open('https://3107alok.github.io/LecTrack-PYQ/', '_blank')">PYQ / QB</button>
+    <button onclick="openPYQ()">PYQ / QB</button>
   </div>
 
   <div style="display: flex; justify-content: center; margin: -10px auto 25px;">
@@ -874,6 +874,17 @@
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- PYQ MODAL -->
+  <div class="modal" id="pyqModal">
+    <div class="modal-content" style="max-width: 1200px; padding: 20px;">
+      <span class="close-btn" onclick="closeModal('pyqModal')">✖</span>
+      <iframe 
+        src="https://3107alok.github.io/LecTrack-PYQ/"
+        style="width:100%; height:80vh; border:none; border-radius: 12px;">
+      </iframe>
     </div>
   </div>
 
@@ -1258,6 +1269,11 @@
     // CLOSE
     function closeModal(id) {
       document.getElementById(id || 'modal').style.display = "none";
+    }
+
+    // PYQ MODAL
+    function openPYQ() {
+      document.getElementById("pyqModal").style.display = "block";
     }
 
     // ATTENDANCE CALCULATOR LOGIC (Multi-Course)
