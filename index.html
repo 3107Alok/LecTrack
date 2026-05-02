@@ -879,11 +879,14 @@
 
   <!-- PYQ MODAL -->
   <div class="modal" id="pyqModal">
-    <div class="modal-content" style="max-width: 1200px; padding: 20px;">
-      <span class="close-btn" onclick="closeModal('pyqModal')">✖</span>
+    <div class="modal-content" style="max-width: 1200px; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+      <div style="background: rgba(15, 25, 30, 0.95); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+        <span style="font-weight: 800; color: var(--accent-teal); font-size: 1.1rem; letter-spacing: 0.5px;">📚 PYQ / QB</span>
+        <span class="close-btn" style="position: static; width: 35px; height: 35px; background: rgba(239, 68, 68, 0.1); color: #ef4444;" onclick="closeModal('pyqModal')">✖</span>
+      </div>
       <iframe 
         src="https://3107alok.github.io/LecTrack-PYQ/"
-        style="width:100%; height:80vh; border:none; border-radius: 12px;">
+        style="width:100%; height:80vh; border:none; display: block;">
       </iframe>
     </div>
   </div>
