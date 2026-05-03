@@ -1352,7 +1352,14 @@
     }
 
     function updateCalciRow(code, presentVal, finalTotal, occurred) {
-      const present = parseInt(presentVal) || 0;
+      let present = parseInt(presentVal) || 0;
+      if (present < 0) present = 0;
+      if (present > occurred) present = occurred;
+      
+      const input = document.getElementById(`input-${code}`);
+      if (input && parseInt(input.value) !== present) {
+        input.value = present;
+      }
 
       // Save to persistence
       calciState[code] = present;
@@ -1422,6 +1429,7 @@
       const input = document.getElementById(`input-${code}`);
       let val = (parseInt(input.value) || 0) + delta;
       if (val < 0) val = 0;
+      if (val > occurred) val = occurred;
       input.value = val;
       updateCalciRow(code, val, finalTotal, occurred);
     }
