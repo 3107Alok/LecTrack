@@ -1066,6 +1066,10 @@
           let classes = timetable[d];
 
           if (classes) {
+            // Extra classes on May 5 and 6
+            if (current.getMonth() === 4 && current.getDate() === 5) classes = [...classes, "PE", "PE"];
+            if (current.getMonth() === 4 && current.getDate() === 6) classes = [...classes, "PE", "PE"];
+
             classes.forEach(sub => {
               counts[sub] = (counts[sub] || 0) + 1;
             });
@@ -1092,6 +1096,9 @@
           let classes = timetable[d];
 
           if (classes) {
+            // Extra classes on May 5 and 6
+            if (current.getMonth() === 4 && current.getDate() === 5) classes = [...classes, "PE", "PE"];
+            if (current.getMonth() === 4 && current.getDate() === 6) classes = [...classes, "PE", "PE"];
             if (current.getTime() === today.getTime()) {
               // Current day logic: only count classes that haven't occurred yet today based on time
               const periodEndTimes = [
