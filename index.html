@@ -1529,8 +1529,20 @@
       const d = date.getDate();
       const day = date.getDay(); // 0 is Sunday, 6 is Saturday
 
-      // 1. Specific ESE overrides (May 23, 30 are Saturdays)
-      if (m === 4 && (d === 23 || d === 30)) {
+      // 1. Specific ESE Exam Check (Precise matching from eseData)
+      const monStr = GLOBAL_MONTH_NAMES[m].toLowerCase();
+      let isEseDay = false;
+      for (let item of eseData) {
+        if (item.date) {
+          const lowerDate = item.date.toLowerCase();
+          if (lowerDate.startsWith(d + " ") && lowerDate.includes(monStr)) {
+            isEseDay = true;
+            break;
+          }
+        }
+      }
+
+      if (isEseDay) {
         return { type: 'ese', label: 'ESE' };
       }
 
@@ -1554,14 +1566,6 @@
       // 5. Practical Exam (1-5 June)
       if (m === 5 && d >= 1 && d <= 5) {
         return { type: 'practical', label: 'Prac' };
-      }
-
-      // 6. ESE Exam (Ends 5 June)
-      // Range: 15 May to 5 June
-      const eseStart = new Date(2026, 4, 15);
-      const eseEnd = new Date(2026, 5, 5);
-      if (date >= eseStart && date <= eseEnd) {
-        return { type: 'ese', label: 'ESE' };
       }
 
       return { type: '', label: '' };
