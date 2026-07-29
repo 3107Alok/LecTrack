@@ -819,7 +819,7 @@
     <button class="calci-highlight-btn" onclick="openPYQ()">📚 PYQ / QB</button>
   </div>
 
-  <h3 class="last-day">Last Instruction Day : 9 May 2026</h3>
+  <h3 class="last-day">Last Instruction Day : 7 Dec 2026</h3>
   <!-- <div style="text-align: center; font-size: 0.65rem; color: #f59e0b; margin: 0 0 20px; font-weight: 600; opacity: 0.8;">
     ⚠️ Note: 22 April (Wed) is treated as a holiday
   </div> -->
@@ -906,7 +906,8 @@
   <!-- PYQ MODAL -->
   <div class="modal" id="pyqModal">
     <div class="modal-content" style="max-width: 1200px; padding: 0; overflow: hidden; position: relative;">
-      <span class="close-btn" onclick="closeModal('pyqModal')" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.4); color: white; width: 35px; height: 35px; z-index: 10; font-size: 0.9rem;">✖</span>
+      <span class="close-btn" onclick="closeModal('pyqModal')"
+        style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.4); color: white; width: 35px; height: 35px; z-index: 10; font-size: 0.9rem;">✖</span>
       <iframe src="https://3107alok.github.io/LecTrack-PYQ/"
         style="width:100%; height:85vh; border:none; display: block;">
       </iframe>
@@ -917,17 +918,16 @@
 
     // SUBJECTS
     const subjects = {
-      "CS208B": "Web Technology",
-      "CS303B": "ANN & ML",
-      "CS401L": "DAA",
-      "CS401P": "DAA Lab",
-      "HS112L": "Universal Human Values",
-      "HS113L": "Aptitude -2",
-      "HS114L": "Soft Skills",
-      "IT202B": "Data Analytics",
-      "IT302L": "CN",
-      "IT302P": "CN Lab",
-      "PE": "Professional Elective"
+      "CS310L": "Theory of Computation",
+      "CS311L": "Software Engineering and Design Principles",
+      "HS203L": "Aptitude - 3",
+      "HS204L": "Soft Skills for Employability - 1",
+      "IT401B": "Advance Databases",
+      "CS312B": "Deep Learning and Gen AI",
+      "PE": "Professional Elective - II",
+      "CS311P": "Software Engineering and Design Principles Lab",
+      "CS313P": "Problem Solving Lab-1",
+      "IT304P": "Project Internship"
     };
 
     // TIME PARSING HELPERS (Global)
@@ -994,26 +994,25 @@
 
     // PAST DATA
     const pastData = {
-      "CS303B": { present: 28, total: 33 },
-      "IT302L": { present: 26, total: 30 },
-      "CS401L": { present: 30, total: 35 },
-      "CS401P": { present: 36, total: 36 },
-      "IT202B": { present: 31, total: 36 },
-      "CS208B": { present: 30, total: 31 },
-      "HS112L": { present: 13, total: 14 },
-      "HS113L": { present: 8, total: 8 },
-      "HS114L": { present: 8, total: 10 },
-      "IT302P": { present: 15, total: 16 },
-      "PE": { present: 42, total: 46 }
+      "CS310L": { present: 0, total: 0 },
+      "CS311L": { present: 0, total: 0 },
+      "HS203L": { present: 0, total: 0 },
+      "HS204L": { present: 0, total: 0 },
+      "IT401B": { present: 0, total: 0 },
+      "CS312B": { present: 0, total: 0 },
+      "PE": { present: 0, total: 0 },
+      "CS311P": { present: 0, total: 0 },
+      "CS313P": { present: 0, total: 0 },
+      "IT304P": { present: 0, total: 0 }
     };
 
     // TIMETABLE
     const timetable = {
-      1: ["HS112L", "IT302L", "CS401L", "CS208B", "CS208B", "CS208B", "PE", "PE"],
-      2: ["CS303B", "CS303B", "CS401L", "IT302L", "CS401P", "CS401P"],
-      3: ["IT302L", "CS401L", "CS401P", "CS401P", "HS112L", "IT202B"],
-      4: ["CS303B", "HS113L", "IT302P", "IT302P", "PE", "PE", "CS208B"],
-      5: ["IT202B", "IT202B", "HS114L", "CS401L", "IT202B", "CS303B", "PE", "PE"]
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: []
     };
 
     const eseData = [
@@ -1036,8 +1035,8 @@
       "2026-04-27", "2026-04-28"
     ];
 
-    const startDate = new Date("2026-04-13");
-    const endDate = new Date("2026-05-09");
+    const startDate = new Date("2026-07-29");
+    const endDate = new Date("2026-12-07");
 
     // ⭐ TODAY (important)
     const today = new Date();
@@ -1268,35 +1267,11 @@
     // DATE SHEET RENDER
     function renderDateSheet() {
       let html = `
-        <div class="mse-header">📑 <span class="shimmer-title">ESE Date Sheet</span></div>
-        <span class="tentative-label">* Tentative Schedule</span>
-        <table class="tt-table mse-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Subject</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>`;
-
-      eseData.forEach(item => {
-        const isCompleted = isExamItemCompleted(item);
-        const rowClass = isCompleted ? 'class="completed-row"' : (item.highlight ? 'class="highlight-row"' : '');
-        const badgeToken = isCompleted ? '<span class="completed-badge" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); margin: 0;">COMPLETED</span>' : (item.highlight ? '<span class="highlight-badge">Special</span>' : '');
-
-        html += `<tr ${rowClass}>
-          <td style="font-weight:700;">${item.date}</td>
-          <td>${item.subject}</td>
-          <td style="position: relative;">
-            ${item.time}
-            ${badgeToken}
-          </td>
-        </tr>`;
-      });
-
-      html += `</tbody></table>`;
-
+        <div class="mse-header" style="text-align: center; font-size: 1.4rem; margin-bottom: 20px;">📑 <span class="shimmer-title">MSE 1 Date Sheet</span></div>
+        <div style="text-align: center; padding: 40px 20px; font-size: 1.2rem; font-weight: 700; color: var(--text-dim);">
+          Coming Soon...
+        </div>
+      `;
       return html;
     }
 
@@ -1360,7 +1335,7 @@
       let present = parseInt(presentVal) || 0;
       if (present < 0) present = 0;
       if (present > occurred) present = occurred;
-      
+
       const input = document.getElementById(`input-${code}`);
       if (input && parseInt(input.value) !== present) {
         input.value = present;
@@ -1445,11 +1420,33 @@
       document.getElementById('calendarModal').style.display = 'block';
     }
 
+    const calendarEvents = [
+      // Holidays
+      { date: "2026-08-15", type: "holiday", title: "Independence Day" },
+      { date: "2026-08-28", type: "holiday", title: "Raksha Bandhan" },
+      { date: "2026-09-04", type: "holiday", title: "Janmashtami" },
+      { date: "2026-10-02", type: "holiday", title: "Gandhi Jayanti" },
+      { date: "2026-10-20", type: "holiday", title: "Dussehra" },
+      { start: "2026-11-07", end: "2026-11-11", type: "holiday", title: "Diwali Break" },
+      { date: "2026-11-24", type: "holiday", title: "Guru Nanak Jayanti" },
+      { start: "2026-12-08", end: "2026-12-11", type: "holiday", title: "ESE Prep Break" },
+      { date: "2026-12-25", type: "holiday", title: "Christmas" },
+
+      // Exams
+      { start: "2026-09-21", end: "2026-09-26", type: "mse1", title: "MSE-I" },
+      { start: "2026-11-16", end: "2026-11-27", type: "mse2", title: "MSE-II" },
+      { start: "2026-12-14", end: "2026-12-28", type: "ese", title: "End Semester Examination" },
+      { start: "2026-12-26", end: "2027-01-02", type: "practical", title: "ESE Practical" }
+    ];
+
     function renderCalendar() {
       const months = [
-        { month: 3, year: 2026 }, // April
-        { month: 4, year: 2026 }, // May
-        { month: 5, year: 2026 }  // June
+        { month: 7, year: 2026 }, // August
+        { month: 8, year: 2026 }, // September
+        { month: 9, year: 2026 }, // October
+        { month: 10, year: 2026 }, // November
+        { month: 11, year: 2026 }, // December
+        { month: 0, year: 2027 }  // January
       ];
 
       let html = '<div class="calendar-container">';
@@ -1488,7 +1485,7 @@
 
       for (let d = 1; d <= daysInMonth; d++) {
         const current = new Date(year, month, d);
-        let { type, label } = getDayType(current);
+        let { type, label, title } = getDayType(current);
         const classes = ['cal-day'];
 
         // Precise Status Check
@@ -1512,8 +1509,10 @@
         }
 
         if (type) classes.push(type);
+        
+        let titleAttr = title ? ` title="${title}"` : '';
 
-        html += `<div class="${classes.join(' ')}">
+        html += `<div class="${classes.join(' ')}"${titleAttr}>
           ${d}
           ${label ? `<span class="day-label">${label}</span>` : ''}
         </div>`;
@@ -1525,50 +1524,36 @@
 
     function getDayType(date) {
       const y = date.getFullYear();
-      const m = date.getMonth(); // 0-indexed
-      const d = date.getDate();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      const dateStr = `${y}-${m}-${d}`;
       const day = date.getDay(); // 0 is Sunday, 6 is Saturday
 
-      // 1. Specific ESE Exam Check (Precise matching from eseData)
-      const monStr = GLOBAL_MONTH_NAMES[m].toLowerCase();
-      let isEseDay = false;
-      for (let item of eseData) {
-        if (item.date) {
-          const lowerDate = item.date.toLowerCase();
-          if (lowerDate.startsWith(d + " ") && lowerDate.includes(monStr)) {
-            isEseDay = true;
-            break;
+      // 1. Check Events Array for exact holidays
+      for (const event of calendarEvents) {
+        if (event.date && event.date === dateStr) {
+          return { type: 'holiday', label: 'H', title: event.title || 'Holiday' };
+        }
+      }
+
+      // 2. Sat/Sun as Holiday (even during exams)
+      if (day === 0) return { type: 'holiday', label: '', title: 'Sunday' };
+      if (day === 6) return { type: 'holiday', label: '', title: 'Saturday' };
+
+      // 3. Check Exam & Holiday Ranges
+      for (const event of calendarEvents) {
+        if (event.start && event.end) {
+          if (dateStr >= event.start && dateStr <= event.end) {
+            if (event.type === 'holiday') return { type: 'holiday', label: 'H', title: event.title };
+            if (event.type === 'mse1') return { type: 'mse', label: 'MSE-1', title: event.title };
+            if (event.type === 'mse2') return { type: 'mse', label: 'MSE-2', title: event.title };
+            if (event.type === 'ese') return { type: 'ese', label: 'ESE', title: event.title };
+            if (event.type === 'practical') return { type: 'practical', label: 'Prac', title: event.title };
           }
         }
       }
 
-      if (isEseDay) {
-        return { type: 'ese', label: 'ESE' };
-      }
-
-      // 2. Holiday (Sundays for April, Sat/Sun for May/June)
-      if (m === 3) { // April
-        if (day === 0) return { type: 'holiday', label: '' };
-      } else if (m === 4 || m === 5) { // May or June
-        if (day === 0 || day === 6) return { type: 'holiday', label: '' };
-      }
-
-      // 3. Specific Holidays
-      if (m === 3 && d === 22) return { type: 'holiday', label: 'H' }; // 22 April
-      if (m === 4 && d === 16) return { type: 'holiday', label: 'H' }; // 16 May
-      if (m === 4 && d === 27) return { type: 'holiday', label: 'H' }; // 27 May
-
-      // 4. MSE (20-28 April)
-      if (m === 3 && d >= 20 && d <= 28) {
-        return { type: 'mse', label: 'MSE' };
-      }
-
-      // 5. Practical Exam (1-5 June)
-      if (m === 5 && d >= 1 && d <= 5) {
-        return { type: 'practical', label: 'Prac' };
-      }
-
-      return { type: '', label: '' };
+      return { type: '', label: '', title: '' };
     }
 
     // BUTTON
