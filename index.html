@@ -3,836 +3,50 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Lec Track</title>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-
-    :root {
-      --bg-teal: radial-gradient(circle at top left, #243f4b 0%, #111c26 100%);
-      --glass-bg: rgba(255, 255, 255, 0.035);
-      --glass-bg-hover: rgba(255, 255, 255, 0.07);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --accent-teal: #38bdf8;
-      --accent-glow: rgba(56, 189, 248, 0.5);
-      --text-main: #ffffff;
-      --text-dim: #94a3b8;
-      --transition-core: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg-teal);
-      background-attachment: fixed;
-      color: var(--text-main);
-      min-height: 100vh;
-      line-height: 1.5;
-    }
-
-    h1 {
-      text-align: center;
-      padding: 10px 20px 2px;
-      font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: -0.5px;
-      margin: 0;
-    }
-
-    .shimmer-title {
-      display: inline-block;
-      background: linear-gradient(90deg, #f8fafc, #38bdf8, #f8fafc);
-      background-size: 200% auto;
-      color: transparent;
-      -webkit-background-clip: text;
-      background-clip: text;
-      animation: gradientShine 4s linear infinite, float 4s ease-in-out infinite;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
-    }
-
-    @keyframes gradientShine {
-      0% {
-        background-position: 0% 50%;
-      }
-
-      100% {
-        background-position: 200% 50%;
-      }
-    }
-
-    @keyframes float {
-      0% {
-        transform: translateY(0px);
-      }
-
-      50% {
-        transform: translateY(-4px);
-      }
-
-      100% {
-        transform: translateY(0px);
-      }
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(25px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .last-day {
-      text-align: center;
-      margin-bottom: 5px;
-      font-weight: 600;
-      font-size: 0.7rem;
-      color: var(--accent-teal);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      opacity: 0.9;
-    }
-
-    .top-btn {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin: 20px auto 30px;
-      padding: 0 20px;
-      max-width: 900px;
-    }
-
-    button {
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-      padding: 10px 22px;
-      border-radius: 14px;
-      color: white;
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: var(--transition-core);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    button:hover {
-      background: var(--glass-bg-hover);
-      transform: translateY(-3px);
-      border-color: var(--accent-teal);
-      box-shadow: 0 15px 30px var(--accent-glow);
-    }
-
-    .calci-highlight-btn {
-      color: white !important;
-      font-weight: 800 !important;
-      border-color: var(--accent-teal) !important;
-    }
-
-    .calci-highlight-btn:hover {
-      box-shadow: 0 0 25px var(--accent-glow) !important;
-      transform: translateY(-2px) scale(1.02);
-    }
-
-    /* TARGET SELECTOR */
-    .target-toggle {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .target-toggle label {
-      cursor: pointer;
-      padding: 4px 10px;
-      border-radius: 12px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      font-size: 0.7rem;
-      font-weight: 600;
-      transition: var(--transition-core);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .target-toggle label:has(input:checked) {
-      background: rgba(56, 189, 248, 0.1);
-      border-color: var(--accent-teal);
-      box-shadow: 0 0 15px var(--accent-glow);
-    }
-
-    /* CONTAINER */
-    .container {
-      max-width: 850px;
-      margin: auto;
-      padding: 0 20px 60px;
-    }
-
-    /* CARD */
-    .card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-      padding: 4px 12px;
-      margin-bottom: 4px;
-      cursor: pointer;
-      transition: var(--transition-core);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
-      pointer-events: none;
-    }
-
-    .card:hover {
-      background: var(--glass-bg-hover);
-      transform: translateY(-5px) scale(1.01);
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr 1fr;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .subject {
-      font-weight: 600;
-      font-size: 0.8rem;
-      letter-spacing: -0.1px;
-    }
-
-    .ratio {
-      text-align: center;
-      font-weight: 500;
-      font-size: 0.7rem;
-      color: var(--text-dim);
-    }
-
-    .ratio-badge {
-      background: rgba(56, 189, 248, 0.1);
-      color: var(--accent-teal);
-      padding: 2px 6px;
-      border-radius: 5px;
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      margin-left: 4px;
-      font-weight: 700;
-      display: inline-block;
-    }
-
-    .remaining {
-      text-align: right;
-      color: #10b981;
-      font-weight: 700;
-      font-size: 0.75rem;
-    }
-
-    /* CA TILES STYLES */
-    .ca-section {
-      margin-top: 15px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .ca-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      margin-top: 8px;
-    }
-
-    .ca-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 8px;
-      text-align: center;
-      transition: var(--transition-core);
-    }
-
-    .ca-card:hover {
-      background: rgba(56, 189, 248, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .ca-date {
-      font-size: 0.65rem;
-      color: var(--accent-teal);
-      font-weight: 800;
-      margin-bottom: 3px;
-    }
-
-    .ca-sub {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: white;
-    }
-
-    /* MODAL SYSTEM OVERHAUL */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      z-index: 2000;
-    }
-
-    .modal-content {
-      position: relative;
-      background: rgba(15, 25, 30, 0.92);
-      backdrop-filter: blur(32px);
-      -webkit-backdrop-filter: blur(32px);
-      margin: 10px auto;
-      padding: 15px;
-      width: 96%;
-      max-width: 1000px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
-      max-height: 92vh;
-      overflow-y: auto;
-      animation: premiumSlide 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-
-    @keyframes premiumSlide {
-      from {
-        transform: translateY(60px);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 25px;
-      right: 25px;
-      cursor: pointer;
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: var(--transition-core);
-      color: var(--text-dim);
-    }
-
-    .close-btn:hover {
-      background: #ef4444;
-      color: white;
-      transform: rotate(90deg);
-    }
-
-    /* TABLES */
-    .tt-table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 4px;
-      font-size: 0.95rem;
-    }
-
-    .tt-table th {
-      padding: 6px;
-      color: var(--text-dim);
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      font-weight: 700;
-    }
-
-    .tt-table td {
-      padding: 8px 5px;
-      background: rgba(255, 255, 255, 0.03);
-      text-align: center;
-      border-top: 1px solid rgba(255, 255, 255, 0.03);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    }
-
-    .tt-table td:first-child {
-      border-left: 1px solid rgba(255, 255, 255, 0.03);
-      border-top-left-radius: 20px;
-      border-bottom-left-radius: 20px;
-    }
-
-    .tt-table td:last-child {
-      border-right: 1px solid rgba(255, 255, 255, 0.03);
-      border-top-right-radius: 20px;
-      border-bottom-right-radius: 20px;
-    }
-
-    .day-col {
-      color: var(--accent-teal);
-      font-weight: 800;
-      font-size: 0.8rem;
-    }
-
-    .lunch-cell {
-      background: rgba(56, 189, 248, 0.05) !important;
-      color: var(--accent-teal);
-      font-size: 0.76rem;
-      font-weight: 800;
-      writing-mode: vertical-lr;
-      text-orientation: mixed;
-      width: 45px;
-      border-radius: 15px !important;
-    }
-
-    .sub-code {
-      font-size: 0.55rem;
-      color: var(--text-dim);
-      margin-bottom: 1px;
-    }
-
-    .sub-name {
-      font-size: 0.65rem;
-      font-weight: 700;
-      margin-top: 1px;
-    }
-
-    /* MSE / DATE SHEET STYLES */
-    .mse-header {
-      font-size: 1.45rem;
-      font-weight: 900;
-      text-align: center;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: white;
-    }
-
-    .highlight-row td {
-      background: rgba(245, 158, 11, 0.1) !important;
-      color: #f59e0b !important;
-      border-color: rgba(245, 158, 11, 0.2) !important;
-    }
-
-    .highlight-badge {
-      background: #f59e0b;
-      color: #000;
-      padding: 3px 10px;
-      border-radius: 8px;
-      font-size: 0.65rem;
-      font-weight: 900;
-      margin-left: 8px;
-    }
-
-    .completed-row td {
-      background: rgba(16, 185, 129, 0.08) !important;
-      color: #10b981 !important;
-      border-color: rgba(16, 185, 129, 0.15) !important;
-    }
-
-    .completed-badge {
-      background: #10b981;
-      color: white;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.6rem;
-      font-weight: 800;
-      margin-left: 8px;
-      letter-spacing: 0.5px;
-    }
-
-    .tentative-label {
-      color: #ff4757;
-      font-size: 0.7rem;
-      font-weight: 900;
-      text-align: right;
-      margin: -15px 15px 15px auto;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      animation: pulse-red 2s infinite;
-      display: block;
-      width: fit-content;
-    }
-
-    @keyframes pulse-red {
-      0% {
-        opacity: 0.6;
-        transform: scale(0.98);
-      }
-
-      50% {
-        opacity: 1;
-        transform: scale(1.02);
-      }
-
-      100% {
-        opacity: 0.6;
-        transform: scale(0.98);
-      }
-    }
-
-    /* MULTI-COURSE CALCULATOR STYLES */
-    .calci-container {
-      max-height: 65vh;
-      overflow-y: auto;
-      padding-right: 5px;
-    }
-
-    .calci-container::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .calci-container::-webkit-scrollbar-thumb {
-      background: var(--glass-border);
-      border-radius: 10px;
-    }
-
-    .calci-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .calci-table th {
-      text-align: center;
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      padding: 10px 5px;
-      border-bottom: 1px solid var(--glass-border);
-      position: sticky;
-      top: 0;
-      background: rgba(15, 25, 30, 0.95);
-      z-index: 10;
-    }
-
-    .calci-row {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      transition: var(--transition-core);
-    }
-
-    .calci-row:hover {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .calci-row td {
-      padding: 10px 5px;
-      vertical-align: middle;
-      text-align: center;
-    }
-
-    .calci-sub-name {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: white;
-      text-align: left !important;
-      line-height: 1.2;
-    }
-
-    .calci-input {
-      width: 55px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-      padding: 8px 4px;
-      color: white;
-      text-align: center;
-      font-size: 0.85rem;
-      font-weight: 700;
-      font-family: inherit;
-      -moz-appearance: textfield;
-      appearance: textfield;
-    }
-
-    .calci-input::-webkit-outer-spin-button,
-    .calci-input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    .calci-input:focus {
-      outline: none;
-      border-color: var(--accent-teal);
-      background: rgba(56, 189, 248, 0.1);
-      box-shadow: 0 0 10px var(--accent-glow);
-    }
-
-    .calci-res {
-      font-size: 0.75rem;
-      font-weight: 800;
-    }
-
-    .calci-res.needed {
-      color: var(--accent-teal);
-    }
-
-    .calci-res.target-86 {
-      color: #94a3b8;
-    }
-
-    .calci-res.met {
-      color: #10b981;
-    }
-
-    .pe-disclaimer {
-      font-size: 0.55rem;
-      color: #f59e0b;
-      margin-top: 2px;
-      display: block;
-      font-weight: 600;
-    }
-
-    .calci-control {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .step-btn {
-      width: 28px;
-      height: 28px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.1rem;
-      font-weight: 800;
-      transition: var(--transition-core);
-      padding: 0;
-      line-height: 1;
-    }
-
-    .step-btn:hover {
-      background: var(--accent-teal);
-      color: black;
-      border-color: var(--accent-teal);
-      transform: scale(1.1);
-    }
-
-    /* CALENDAR STYLES */
-    .calendar-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      padding: 10px;
-    }
-
-    .month-box {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 15px;
-    }
-
-    .month-name {
-      text-align: center;
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: var(--accent-teal);
-      margin-bottom: 16px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-      text-align: center;
-    }
-
-    .day-header {
-      font-size: 0.65rem;
-      font-weight: 800;
-      color: var(--text-dim);
-      padding-bottom: 8px;
-      text-transform: uppercase;
-    }
-
-    .cal-day {
-      aspect-ratio: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 600;
-      border-radius: 8px;
-      position: relative;
-      transition: var(--transition-core);
-      border: 1px solid transparent;
-    }
-
-    .cal-day:hover {
-      background: rgba(255, 255, 255, 0.05);
-      transform: scale(1.1);
-      z-index: 2;
-    }
-
-    /* Day States */
-    .cal-day.holiday {
-      color: #ff4d4d;
-      font-weight: 800;
-    }
-
-    .cal-day.holiday::after {
-      content: '';
-      position: absolute;
-      bottom: 6px;
-      width: 4px;
-      height: 4px;
-      background: #ff4d4d;
-      border-radius: 50%;
-      box-shadow: 0 0 5px #ff4d4d;
-    }
-
-    .cal-day.mse {
-      background: rgba(245, 158, 11, 0.25);
-      color: #ffffff;
-      border-color: rgba(245, 158, 11, 0.5);
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
-    }
-
-    .cal-day.mse .day-label {
-      color: #fcd34d;
-    }
-
-    .cal-day.ese {
-      background: rgba(139, 92, 246, 0.25);
-      color: #ffffff;
-      border-color: rgba(139, 92, 246, 0.5);
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
-    }
-
-    .cal-day.ese .day-label {
-      color: #c4b5fd;
-    }
-
-    .cal-day.practical {
-      background: rgba(56, 189, 248, 0.25);
-      color: #ffffff;
-      border-color: rgba(56, 189, 248, 0.5);
-      box-shadow: 0 4px 15px var(--accent-glow);
-    }
-
-    .cal-day.practical .day-label {
-      color: var(--accent-teal);
-    }
-
-    .cal-day.completed {
-      background: rgba(16, 185, 129, 0.4) !important;
-      border-color: #10b981 !important;
-      color: #ffffff !important;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
-      font-weight: 800 !important;
-    }
-
-    .cal-day.completed .day-label {
-      color: #ffffff !important;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 0 4px;
-      border-radius: 4px;
-    }
-
-    .day-label {
-      font-size: 0.5rem;
-      font-weight: 900;
-      position: absolute;
-      bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    @media (max-width: 768px) {
-      .top-btn {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .row {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-
-      .remaining {
-        text-align: center;
-      }
-
-      .modal-content {
-        padding: 30px 20px;
-      }
-
-      .tt-table {
-        font-size: 0.7rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
+  <div class="theme-switcher">
+    <button class="theme-btn" onclick="toggleThemeMenu()">
+      <div id="current-theme-dot" style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent-teal);"></div>
+      <span id="current-theme-name">Default</span>
+      <span style="font-size: 0.6rem; opacity: 0.7;">▼</span>
+    </button>
+    <div id="theme-menu" class="theme-menu"></div>
+  </div>
 
   <h1><span class="shimmer-title">LecTrack</span></h1>
 
   <div class="top-btn">
     <button onclick="openAttendance()">Live Attendance</button>
     <button onclick="openCalendar()">Calendar</button>
+    <button onclick="openTimeTable()">TimeTable</button>
     <button onclick="openDateSheet()">DateSheet</button>
   </div>
 
-  <div style="display: flex; justify-content: center; margin: -10px auto 25px;">
-    <button class="calci-highlight-btn" onclick="openPYQ()">📚 PYQ / QB</button>
+  <div
+    style="display: flex; justify-content: center; margin: -10px auto 25px; gap: 15px; flex-wrap: wrap; padding: 0 20px;">
+    <button onclick="openAttendanceCalci()">🧮 Attendance Calci</button>
   </div>
 
-  <h3 class="last-day">Last Instruction Day : 7 Dec 2026</h3>
+  <h3 class="last-day" style="display: none;">Last Instruction Day : 7 Dec 2026</h3>
   <!-- <div style="text-align: center; font-size: 0.65rem; color: #f59e0b; margin: 0 0 20px; font-weight: 600; opacity: 0.8;">
     ⚠️ Note: 22 April (Wed) is treated as a holiday
   </div> -->
 
   <div class="target-toggle">
     <label>
-      <input type="radio" name="targetPct" value="75" checked onchange="renderDashboard()"
-        style="accent-color: var(--accent-teal);"> 75% Target
+      <input type="radio" name="targetPct" value="70" onchange="renderDashboard()"
+        style="accent-color: var(--accent-teal);"> 70% Target
     </label>
     <label>
-      <input type="radio" name="targetPct" value="86" onchange="renderDashboard()"
-        style="accent-color: var(--accent-teal);"> 86%
-      Target
+      <input type="radio" name="targetPct" value="75" checked onchange="renderDashboard()"
+        style="accent-color: var(--accent-teal);"> 75% Target
     </label>
   </div>
 
@@ -880,19 +94,33 @@
       <h2 style="text-align: center; margin-bottom: 5px; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px;">
         🧮 <span class="shimmer-title">Attendance Calci</span></h2>
       <p style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 15px; font-weight: 500;">
-        Enter Currrent Present Counts.Total Lecutres Count Changes according to TimeTable.
+        Enter Current Present Count <span id="calciPhaseLabel"
+          style="color: var(--accent-teal); font-weight: 800;"></span>
       </p>
       <div id="overall-attendance"
-        style="text-align: center; margin-bottom: 15px; font-weight: 800; font-size: 1rem; color: white;">Overall
+        style="text-align: center; margin-bottom: 12px; font-weight: 800; font-size: 1rem; color: white;">Overall
         Attendance: --%</div>
+      <div
+        style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; font-size: 0.7rem; color: var(--text-dim); font-weight: 600;">
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <div style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></div> Safe
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <div style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></div> Possible to Maintain
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <div style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></div> Danger
+        </div>
+      </div>
       <div class="calci-container">
         <table class="calci-table">
           <thead>
             <tr>
               <th style="text-align: left;">Subject</th>
               <th>Current Present & Percentage</th>
-              <th>Need for 75%</th>
-              <th>Need for 86%</th>
+              <th>Remaining Lectures</th>
+              <th>For 70%</th>
+              <th>For 75%</th>
             </tr>
           </thead>
           <tbody id="calciBody">
@@ -903,31 +131,18 @@
     </div>
   </div>
 
-  <!-- PYQ MODAL -->
-  <div class="modal" id="pyqModal">
-    <div class="modal-content" style="max-width: 1200px; padding: 0; overflow: hidden; position: relative;">
-      <span class="close-btn" onclick="closeModal('pyqModal')"
-        style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.4); color: white; width: 35px; height: 35px; z-index: 10; font-size: 0.9rem;">✖</span>
-      <iframe src="https://3107alok.github.io/LecTrack-PYQ/"
-        style="width:100%; height:85vh; border:none; display: block;">
-      </iframe>
-    </div>
-  </div>
-
   <script>
 
-    // SUBJECTS
     const subjects = {
       "CS310L": "Theory of Computation",
-      "CS311L": "Software Engineering and Design Principles",
+      "CS311L": "Software Engineering (SE & DP)",
       "HS203L": "Aptitude - 3",
-      "HS204L": "Soft Skills for Employability - 1",
+      "HS204L": "Soft Skills",
       "IT401B": "Advance Databases",
-      "CS312B": "Deep Learning and Gen AI",
-      "PE": "Professional Elective - II",
-      "CS311P": "Software Engineering and Design Principles Lab",
-      "CS313P": "Problem Solving Lab-1",
-      "IT304P": "Project Internship"
+      "CS312B": "DL and Gen AI",
+      "PE": "Professional Elective",
+      "CS311P": "Software Engineering (SE & DP) Lab",
+      "CS313P": "Problem Solving Lab"
     };
 
     // TIME PARSING HELPERS (Global)
@@ -992,7 +207,6 @@
     // CALCI PERSISTENCE
     let calciState = JSON.parse(localStorage.getItem('lectrack_calci')) || {};
 
-    // PAST DATA
     const pastData = {
       "CS310L": { present: 0, total: 0 },
       "CS311L": { present: 0, total: 0 },
@@ -1002,17 +216,16 @@
       "CS312B": { present: 0, total: 0 },
       "PE": { present: 0, total: 0 },
       "CS311P": { present: 0, total: 0 },
-      "CS313P": { present: 0, total: 0 },
-      "IT304P": { present: 0, total: 0 }
+      "CS313P": { present: 0, total: 0 }
     };
 
     // TIMETABLE
     const timetable = {
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: []
+      1: ["CS313P", "CS313P", "PE", "PE", "CS310L", "HS204L", "-", "-"],
+      2: ["PE", "PE", "CS312B", "HS203L", "HS203L", "CS311L", "-", "-"],
+      3: ["IT401B", "CS310L", "PE", "PE", "CS312B", "IT401B", "IT401B", "-"],
+      4: ["CS311L", "CS310L", "CS312B", "CS311P", "CS311P", "IT401B", "CS312B", "CS312B"],
+      5: ["HS204L", "CS310L", "IT401B", "CS313P", "CS313P", "CS311L", "-", "-"]
     };
 
     const eseData = [
@@ -1032,10 +245,33 @@
       "2026-04-14",
       "2026-04-20", "2026-04-21", "2026-04-22",
       "2026-04-23", "2026-04-24", "2026-04-25",
-      "2026-04-27", "2026-04-28"
+      "2026-04-27", "2026-04-28",
+      "2026-08-05", "2026-08-06", "2026-08-07",
+      "2026-08-08", "2026-08-09", "2026-08-10",
+      "2026-08-11"
     ];
 
-    const startDate = new Date("2026-07-29");
+    const calendarEvents = [
+      // Holidays
+      { start: "2026-08-05", end: "2026-08-11", type: "holiday", title: "Kanwar Yatra Holiday" },
+      { date: "2026-08-15", type: "holiday", title: "Independence Day" },
+      { date: "2026-08-28", type: "holiday", title: "Raksha Bandhan" },
+      { date: "2026-09-04", type: "holiday", title: "Janmashtami" },
+      { date: "2026-10-02", type: "holiday", title: "Gandhi Jayanti" },
+      { date: "2026-10-20", type: "holiday", title: "Dussehra" },
+      { start: "2026-11-07", end: "2026-11-11", type: "holiday", title: "Diwali Break" },
+      { date: "2026-11-24", type: "holiday", title: "Guru Nanak Jayanti" },
+      { start: "2026-12-08", end: "2026-12-11", type: "holiday", title: "ESE Prep Break" },
+      { date: "2026-12-25", type: "holiday", title: "Christmas" },
+
+      // Exams
+      { start: "2026-09-21", end: "2026-09-26", type: "mse1", title: "MSE-I" },
+      { start: "2026-11-16", end: "2026-11-27", type: "mse2", title: "MSE-II" },
+      { start: "2026-12-14", end: "2026-12-28", type: "ese", title: "End Semester Examination" },
+      { start: "2026-12-26", end: "2027-01-02", type: "practical", title: "ESE Practical" }
+    ];
+
+    const startDate = new Date("2026-08-03");
     const endDate = new Date("2026-12-07");
 
     // ⭐ TODAY (important)
@@ -1048,24 +284,49 @@
       let m = String(date.getMonth() + 1).padStart(2, '0');
       let d = String(date.getDate()).padStart(2, '0');
       let str = y + '-' + m + '-' + d;
-      return holidays.includes(str);
+
+      if (holidays.includes(str)) return true;
+
+      const skipTypes = ['holiday', 'mse1', 'mse2', 'ese', 'practical'];
+      for (const event of calendarEvents) {
+        if (skipTypes.includes(event.type)) {
+          if (event.date && event.date === str) return true;
+          if (event.start && event.end && str >= event.start && str <= event.end) return true;
+        }
+      }
+      return false;
+    }
+
+    function getPhaseInfo() {
+      let mse1Event = calendarEvents.find(e => e.type === 'mse1');
+      let mse2Event = calendarEvents.find(e => e.type === 'mse2');
+      const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+      if (mse1Event && todayStr < mse1Event.start) {
+        let endD = new Date(mse1Event.start);
+        endD.setDate(endD.getDate() - 1);
+        return { endDate: endD, label: "Target: Till MSE-1", type: "mse1" };
+      } else if (mse2Event && todayStr < mse2Event.start) {
+        let endD = new Date(mse2Event.start);
+        endD.setDate(endD.getDate() - 1);
+        return { endDate: endD, label: "Target: Till MSE-2", type: "mse2" };
+      }
+      return { endDate: new Date("2026-12-07"), label: "Target till Last Instruction Day", type: "final" };
     }
 
     // ⭐ FULL FUTURE (ratio ke liye) — counts periods per subject
     function fullFutureCounts() {
+      const phase = getPhaseInfo();
       let counts = {};
       let current = new Date(startDate);
 
-      while (current <= endDate) {
+      while (current <= phase.endDate) {
         let d = current.getDay();
 
         if (d !== 0 && d !== 6 && !isHoliday(current)) {
           let classes = timetable[d];
 
           if (classes) {
-            // Extra classes on May 5 and 6
-            if (current.getMonth() === 4 && current.getDate() === 5) classes = [...classes, "PE", "PE"];
-            if (current.getMonth() === 4 && current.getDate() === 6) classes = [...classes, "PE", "PE"];
 
             classes.forEach(sub => {
               counts[sub] = (counts[sub] || 0) + 1;
@@ -1081,26 +342,24 @@
 
     // ⭐ REMAINING (dynamic) — counts periods, includes today, updates based on time
     function remainingCounts() {
+      const phase = getPhaseInfo();
       let counts = {};
 
       let current = new Date(today); // includes today (midnight)
       let now = new Date();
 
-      while (current <= endDate) {
+      while (current <= phase.endDate) {
         let d = current.getDay();
 
         if (d !== 0 && d !== 6 && !isHoliday(current)) {
           let classes = timetable[d];
 
           if (classes) {
-            // Extra classes on May 5 and 6
-            if (current.getMonth() === 4 && current.getDate() === 5) classes = [...classes, "PE", "PE"];
-            if (current.getMonth() === 4 && current.getDate() === 6) classes = [...classes, "PE", "PE"];
             if (current.getTime() === today.getTime()) {
               // Current day logic: only count classes that haven't occurred yet today based on time
               const periodEndTimes = [
-                { h: 10, m: 0 }, { h: 10, m: 50 }, { h: 11, m: 40 }, { h: 12, m: 30 }, // Before Lunch
-                { h: 14, m: 20 }, { h: 15, m: 10 }, { h: 16, m: 0 }, { h: 16, m: 50 }  // After Lunch
+                { h: 10, m: 0 }, { h: 10, m: 50 }, { h: 11, m: 40 }, { h: 12, m: 30 }, { h: 13, m: 20 }, // Before Lunch
+                { h: 15, m: 10 }, { h: 16, m: 0 }, { h: 16, m: 50 }  // After Lunch
               ];
               const currentH = now.getHours();
               const currentM = now.getMinutes();
@@ -1134,13 +393,16 @@
 
     // RENDER
     function renderDashboard() {
-      dashboard.innerHTML = "";
+      const phase = getPhaseInfo();
+      dashboard.innerHTML = `<div style="width: 100%; text-align: center; color: var(--accent-teal); font-weight: 800; font-size: 1.1rem; margin-bottom: 10px; grid-column: 1 / -1;">${phase.label}</div>`;
+
       let targetNode = document.querySelector('input[name="targetPct"]:checked');
       let targetVal = targetNode ? targetNode.value : "75";
-      let multiplier = targetVal === "86" ? 0.86 : 0.75;
+      let multiplier = targetVal === "70" ? 0.70 : 0.75;
 
       const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
 
+      let delayIndex = 0;
       for (let sub of sortedSubjects) {
 
         let past = pastData[sub] || { present: 0, total: 0 };
@@ -1151,7 +413,7 @@
         let futureLeft = remaining[sub] || 0;
 
         dashboard.innerHTML += `
-      <div class="card" onclick="showDetails('${sub}')">
+      <div class="card" style="animation-delay: ${delayIndex * 0.05}s;" onclick="showDetails('${sub}')">
         <div class="row">
           <div class="subject">${subjects[sub]}</div>
 
@@ -1163,18 +425,29 @@
         </div>
       </div>
     `;
+        delayIndex++;
       }
+      
+      // Save to local storage
+      localStorage.setItem('lectrack_targetPct', targetVal);
+    }
+
+    // Load saved targetPct before initial render
+    const savedTarget = localStorage.getItem('lectrack_targetPct');
+    if (savedTarget) {
+      const radio = document.querySelector(`input[name="targetPct"][value="${savedTarget}"]`);
+      if (radio) radio.checked = true;
     }
 
     renderDashboard();
 
     // DETAIL VIEW
     function showDetails(subject) {
-
+      const phase = getPhaseInfo();
       let html = "";
       let current = new Date(today); // Start from today to show remaining lectures
 
-      while (current <= endDate) {
+      while (current <= phase.endDate) {
 
         let d = current.getDay();
 
@@ -1207,7 +480,7 @@
       document.getElementById("modal").style.display = "block";
     }
 
-    // TIME TABLE VIEW (Transposed: Days in Rows, Time in Cols)
+    // TIME TABLE VIEW
     function openTimeTable() {
       const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
       const times = [
@@ -1215,14 +488,14 @@
         "10:00-10:50",
         "10:50-11:40",
         "11:40-12:30",
-        "12:30-01:30", // Lunch
-        "01:30-02:20",
+        "12:30-01:20",
+        "01:20-02:20", // Lunch
         "02:20-03:10",
         "03:10-04:00",
         "04:00-04:50"
       ];
 
-      let html = `<h2 style="text-align: center; margin-bottom: 20px;"><span class="shimmer-title">Time Table CS - 4A</span></h2>
+      let html = `<h2 style="text-align: center; margin-bottom: 20px;"><span class="shimmer-title">Time Table CS - 5A</span></h2>
         <table class="tt-table">
         <thead>
           <tr>
@@ -1237,10 +510,10 @@
         html += `<tr>
           <td class="day-col">${dayName}</td>
           ${times.map((time, tIdx) => {
-          if (tIdx === 4) {
+          if (tIdx === 5) {
             return dayIdx === 0 ? `<td rowspan="5" class="lunch-cell">LUNCH BREAK</td>` : '';
           }
-          const periodIdx = tIdx < 4 ? tIdx : tIdx - 1;
+          const periodIdx = tIdx < 5 ? tIdx : tIdx - 1;
           const subCode = (timetable[dayKey] && timetable[dayKey][periodIdx]) || "-";
           const subName = subjects[subCode] || subCode;
           return `<td>
@@ -1280,13 +553,11 @@
       document.getElementById(id || 'modal').style.display = "none";
     }
 
-    // PYQ MODAL
-    function openPYQ() {
-      document.getElementById("pyqModal").style.display = "block";
-    }
-
     // ATTENDANCE CALCULATOR LOGIC (Multi-Course)
     function openAttendanceCalci() {
+      const phase = getPhaseInfo();
+      document.getElementById('calciPhaseLabel').innerText = `(${phase.label.replace('Target ', '')})`;
+
       const tbody = document.getElementById('calciBody');
       tbody.innerHTML = '';
 
@@ -1295,19 +566,24 @@
 
       const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
 
+      let delayIndex = 0;
       for (let code of sortedSubjects) {
         let past = pastData[code] || { present: 0, total: 0 };
         let finalTotal = past.total + (fullFuture[code] || 0);
         let occurred = finalTotal - (remainFuture[code] || 0);
 
-        // Use persisted value if available, else fallback to system data
-        let currentPresent = calciState[code] !== undefined ? calciState[code] : past.present;
+        // Use persisted value if available, else fallback to 100% of occurred (Healthy Score)
+        let currentPresent = calciState[code] !== undefined ? calciState[code] : occurred;
 
         let tr = document.createElement('tr');
         tr.className = 'calci-row';
+        tr.style.animationDelay = `${delayIndex * 0.05}s`;
         tr.innerHTML = `
           <td>
-            <div class="calci-sub-name">${subjects[code]}</div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div id="health-circle-${code}" style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; flex-shrink: 0;" title="Safe: Target Met"></div>
+              <div class="calci-sub-name" style="margin-bottom: 0;">${subjects[code]}</div>
+            </div>
           </td>
           <td class="calci-control">
             <button class="step-btn" onclick="adjustCalci('${code}', -1, ${finalTotal}, ${occurred})">−</button>
@@ -1319,13 +595,15 @@
             <button class="step-btn" onclick="adjustCalci('${code}', 1, ${finalTotal}, ${occurred})">+</button>
             <span id="pct-${code}" style="font-size: 0.7rem; color: #10b981; min-width: 40px; text-align: right; font-weight: 700;"></span>
           </td>
-          <td id="res75-${code}" class="calci-res">--</td>
-          <td id="res86-${code}" class="calci-res target-86">--</td>
+          <td class="calci-res" style="color: var(--text-dim);">${remainFuture[code] || 0}</td>
+          <td id="res70-${code}" class="calci-res">--</td>
+          <td id="res75-${code}" class="calci-res target-75">--</td>
         `;
         tbody.appendChild(tr);
 
         // Initial Calculation
         updateCalciRow(code, currentPresent, finalTotal, occurred);
+        delayIndex++;
       }
 
       document.getElementById('calciModal').style.display = 'block';
@@ -1345,7 +623,7 @@
       calciState[code] = present;
       localStorage.setItem('lectrack_calci', JSON.stringify(calciState));
 
-      const targets = [75, 86];
+      const targets = [70, 75];
 
       targets.forEach(t => {
         const threshold = t / 100;
@@ -1360,9 +638,37 @@
           el.className = "calci-res met";
         } else {
           el.textContent = `${diff} more`;
-          el.className = t === 75 ? "calci-res needed" : "calci-res target-86";
+          el.className = t === 70 ? "calci-res needed" : "calci-res target-75";
         }
       });
+
+      // Update Health Indicator
+      const phase = getPhaseInfo();
+      let mandatoryTarget = phase.type === 'mse1' ? 0.70 : 0.75;
+      let requiredForMandatory = Math.ceil(mandatoryTarget * finalTotal);
+
+      let futureLeft = finalTotal - occurred;
+      let maxPossible = present + futureLeft;
+
+      let healthColor = "#ef4444";
+      let healthWidth = Math.min((present / requiredForMandatory) * 100, 100);
+      let healthText = `Critical`;
+
+      if (present >= requiredForMandatory) {
+        healthColor = "#10b981"; // Safe
+        healthText = `Safe: Target Met`;
+      } else if (maxPossible >= requiredForMandatory) {
+        healthColor = "#f59e0b"; // On Track
+        healthText = `Possible to Maintain`;
+      } else {
+        healthText = `Danger: Cannot Reach`;
+      }
+
+      const hc = document.getElementById(`health-circle-${code}`);
+      if (hc) {
+        hc.style.background = healthColor;
+        hc.title = healthText;
+      }
 
       // Individual Percentage
       const pctEl = document.getElementById(`pct-${code}`);
@@ -1420,24 +726,6 @@
       document.getElementById('calendarModal').style.display = 'block';
     }
 
-    const calendarEvents = [
-      // Holidays
-      { date: "2026-08-15", type: "holiday", title: "Independence Day" },
-      { date: "2026-08-28", type: "holiday", title: "Raksha Bandhan" },
-      { date: "2026-09-04", type: "holiday", title: "Janmashtami" },
-      { date: "2026-10-02", type: "holiday", title: "Gandhi Jayanti" },
-      { date: "2026-10-20", type: "holiday", title: "Dussehra" },
-      { start: "2026-11-07", end: "2026-11-11", type: "holiday", title: "Diwali Break" },
-      { date: "2026-11-24", type: "holiday", title: "Guru Nanak Jayanti" },
-      { start: "2026-12-08", end: "2026-12-11", type: "holiday", title: "ESE Prep Break" },
-      { date: "2026-12-25", type: "holiday", title: "Christmas" },
-
-      // Exams
-      { start: "2026-09-21", end: "2026-09-26", type: "mse1", title: "MSE-I" },
-      { start: "2026-11-16", end: "2026-11-27", type: "mse2", title: "MSE-II" },
-      { start: "2026-12-14", end: "2026-12-28", type: "ese", title: "End Semester Examination" },
-      { start: "2026-12-26", end: "2027-01-02", type: "practical", title: "ESE Practical" }
-    ];
 
     function renderCalendar() {
       const months = [
@@ -1509,7 +797,7 @@
         }
 
         if (type) classes.push(type);
-        
+
         let titleAttr = title ? ` title="${title}"` : '';
 
         html += `<div class="${classes.join(' ')}"${titleAttr}>
@@ -1567,6 +855,65 @@
         event.target.style.display = "none";
       }
     }
+    
+    // THEME SWITCHER
+    const themes = {
+      default: { name: 'Default', color: '#ecd567', glow: 'rgba(236, 213, 103, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #2b2d1c 0%, #151611 40%, #0a0a0a 100%)' },
+      ocean: { name: 'Ocean', color: '#06b6d4', glow: 'rgba(6, 182, 212, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #163641 0%, #101920 40%, #0a0a0a 100%)' },
+      forest: { name: 'Forest', color: '#10b981', glow: 'rgba(16, 185, 129, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #183324 0%, #111a15 40%, #0a0a0a 100%)' },
+      sunset: { name: 'Sunset', color: '#f97316', glow: 'rgba(249, 115, 22, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #3d2212 0%, #1a120b 40%, #0a0a0a 100%)' },
+      amethyst: { name: 'Amethyst', color: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #27163d 0%, #130e1a 40%, #0a0a0a 100%)' },
+      custom: { name: 'Custom', color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #162441 0%, #101420 40%, #0a0a0a 100%)' }
+    };
+
+    function toggleThemeMenu() {
+      const menu = document.getElementById('theme-menu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function applyTheme(themeKey) {
+      const theme = themes[themeKey];
+      if (!theme) return;
+      
+      document.documentElement.style.setProperty('--accent-teal', theme.color);
+      document.documentElement.style.setProperty('--accent-glow', theme.glow);
+      document.documentElement.style.setProperty('--bg-teal', theme.bg);
+      
+      document.getElementById('current-theme-name').innerText = theme.name;
+      document.getElementById('current-theme-dot').style.background = theme.color;
+      
+      localStorage.setItem('lectrack_theme', themeKey);
+      document.getElementById('theme-menu').style.display = 'none';
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem('lectrack_theme') || 'default';
+      applyTheme(saved);
+      
+      const menu = document.getElementById('theme-menu');
+      menu.innerHTML = '';
+      for (const [key, t] of Object.entries(themes)) {
+        menu.innerHTML += `
+          <div class="theme-option" onclick="applyTheme('${key}')">
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: ${t.color};"></div>
+            <span>${t.name}</span>
+          </div>
+        `;
+      }
+    }
+    
+    // Initialize theme on load
+    initTheme();
+    
+    // Close theme menu if clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.theme-switcher')) {
+        const menu = document.getElementById('theme-menu');
+        if (menu && menu.style.display === 'block') {
+          menu.style.display = 'none';
+        }
+      }
+    });
   </script>
 
 </body>
