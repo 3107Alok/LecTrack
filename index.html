@@ -25,6 +25,12 @@
 
   <h1><span class="shimmer-title">LecTrack</span></h1>
 
+  <div id="install-container" style="display: none; text-align: center; margin-bottom: 20px;">
+    <button id="install-btn" style="background: var(--accent-teal); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); transition: transform 0.2s;">
+      📲 Install App
+    </button>
+  </div>
+
   <div class="top-btn">
     <button onclick="openAttendance()">Live Attendance</button>
     <button onclick="openCalendar()">Calendar</button>
@@ -960,14 +966,37 @@
       }, 2500);
     }
 
+    // PWA Install Prompt Logic
+    let deferredPrompt;
+    const installContainer = document.getElementById('install-container');
+    const installBtn = document.getElementById('install-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installContainer.style.display = 'block';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installContainer.style.display = 'none';
+      }
+      deferredPrompt = null;
+    });
+
     // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
-          console.log('ServiceWorker registration successful');
-        }).catch(err => {
-          console.log('ServiceWorker registration failed: ', err);
-        });
+        navigator.serviceWorker.register('sw.js')
+          .then(registration => {
+            console.log('SW registered:', registration);
+          })
+          .catch(error => {
+            console.log('SW registration failed:', error);
+          });
       });
     }
   </script>
