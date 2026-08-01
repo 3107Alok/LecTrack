@@ -15,7 +15,8 @@
 <body>
   <div class="theme-switcher">
     <button class="theme-btn" onclick="toggleThemeMenu()">
-      <div id="current-theme-dot" style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent-teal);"></div>
+      <div id="current-theme-dot"
+        style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent-teal);"></div>
       <span id="current-theme-name">Default</span>
       <span style="font-size: 0.6rem; opacity: 0.7;">▼</span>
     </button>
@@ -83,7 +84,7 @@
   <div class="modal" id="calendarModal">
     <div class="modal-content" style="max-width: 1100px;">
       <span class="close-btn" onclick="closeModal('calendarModal')">✖</span>
-      <h2 style="text-align: center; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.5px;">📅 <span
+      <h2 style="text-align: center; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.5px;"> <span
           class="shimmer-title">Academic Calendar 2026</span></h2>
       <div id="calendarContent"></div>
     </div>
@@ -429,7 +430,7 @@
     `;
         delayIndex++;
       }
-      
+
       // Save to local storage
       localStorage.setItem('lectrack_targetPct', targetVal);
     }
@@ -542,7 +543,7 @@
     // DATE SHEET RENDER
     function renderDateSheet() {
       let html = `
-        <div class="mse-header" style="text-align: center; font-size: 1.4rem; margin-bottom: 20px;">📑 <span class="shimmer-title">MSE 1 Date Sheet</span></div>
+        <div class="mse-header" style="text-align: center; font-size: 1.4rem; margin-bottom: 20px; padding-top: 15px; padding-right: 30px;">📑 <span class="shimmer-title">MSE 1 Date Sheet</span></div>
         <div style="text-align: center; padding: 40px 20px; font-size: 1.2rem; font-weight: 700; color: var(--text-dim);">
           Coming Soon...
         </div>
@@ -801,8 +802,11 @@
         if (type) classes.push(type);
 
         let titleAttr = title ? ` title="${title}"` : '';
+        let clickAttr = (title && title !== 'Sunday' && title !== 'Saturday')
+          ? ` onclick="showToast('${title}')" style="cursor: pointer;"`
+          : '';
 
-        html += `<div class="${classes.join(' ')}"${titleAttr}>
+        html += `<div class="${classes.join(' ')}"${titleAttr}${clickAttr}>
           ${d}
           ${label ? `<span class="day-label">${label}</span>` : ''}
         </div>`;
@@ -857,7 +861,7 @@
         event.target.style.display = "none";
       }
     }
-    
+
     // THEME SWITCHER
     const themes = {
       default: { name: 'Default', color: '#ecd567', glow: 'rgba(236, 213, 103, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #2b2d1c 0%, #151611 40%, #0a0a0a 100%)' },
@@ -876,14 +880,14 @@
     function applyTheme(themeKey) {
       const theme = themes[themeKey];
       if (!theme) return;
-      
+
       document.documentElement.style.setProperty('--accent-teal', theme.color);
       document.documentElement.style.setProperty('--accent-glow', theme.glow);
       document.documentElement.style.setProperty('--bg-teal', theme.bg);
-      
+
       document.getElementById('current-theme-name').innerText = theme.name;
       document.getElementById('current-theme-dot').style.background = theme.color;
-      
+
       localStorage.setItem('lectrack_theme', themeKey);
       document.getElementById('theme-menu').style.display = 'none';
     }
@@ -891,7 +895,7 @@
     function initTheme() {
       const saved = localStorage.getItem('lectrack_theme') || 'default';
       applyTheme(saved);
-      
+
       const menu = document.getElementById('theme-menu');
       menu.innerHTML = '';
       for (const [key, t] of Object.entries(themes)) {
@@ -903,12 +907,12 @@
         `;
       }
     }
-    
+
     // Initialize theme on load
     initTheme();
-    
+
     // Close theme menu if clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
       if (!e.target.closest('.theme-switcher')) {
         const menu = document.getElementById('theme-menu');
         if (menu && menu.style.display === 'block') {
@@ -916,7 +920,45 @@
         }
       }
     });
-    
+
+    // Custom Toast Notification for Events
+    function showToast(message) {
+      const existing = document.getElementById('toast-msg');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.id = 'toast-msg';
+      toast.innerText = message;
+      toast.style.position = 'fixed';
+      toast.style.bottom = '20px';
+      toast.style.left = '50%';
+      toast.style.transform = 'translateX(-50%)';
+      toast.style.background = 'var(--glass-bg-hover)';
+      toast.style.color = '#fff';
+      toast.style.padding = '12px 24px';
+      toast.style.borderRadius = '30px';
+      toast.style.border = '1px solid var(--accent-teal)';
+      toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+      toast.style.zIndex = '10000';
+      toast.style.fontSize = '0.9rem';
+      toast.style.fontWeight = '700';
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(-10px)';
+      }, 10);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
     // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
