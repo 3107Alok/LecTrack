@@ -29,6 +29,11 @@ self.addEventListener("activate", event => {
 
 // NETWORK FIRST STRATEGY
 self.addEventListener("fetch", event => {
+  // Don't cache non-http requests (e.g. chrome-extension://)
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then(networkResponse => {
