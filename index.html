@@ -7,7 +7,9 @@
   <title>Lec Track</title>
 
   <link rel="stylesheet" href="style.css">
-
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ecd567">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
 </head>
 
 <body>
@@ -914,6 +916,17 @@
         }
       }
     });
+    
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+          console.log('ServiceWorker registration successful');
+        }).catch(err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
   </script>
 
 </body>
