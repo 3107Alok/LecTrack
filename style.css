@@ -565,7 +565,18 @@
     .calci-table td:nth-child(4),
     .calci-table th:nth-child(5),
     .calci-table td:nth-child(5) {
-      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    .calci-table th:nth-child(4)::before,
+    .calci-table td:nth-child(4)::before,
+    .calci-table th:nth-child(5)::before,
+    .calci-table td:nth-child(5)::before {
+      content: "|";
+      position: absolute;
+      left: -2px;
+      color: rgba(255, 255, 255, 0.15);
+      font-weight: 300;
     }
 
     .calci-sub-name {
