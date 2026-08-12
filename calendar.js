@@ -1,4 +1,4 @@
-    // CALENDAR day
+    // CALENDAR 
     function openCalendar() {
       renderCalendar();
       document.getElementById('calendarModal').style.display = 'block';
