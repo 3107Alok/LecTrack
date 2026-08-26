@@ -26,7 +26,16 @@
   <h1><span class="shimmer-title">LecTrack</span></h1>
 
 
-  <div class="top-btn">
+  <!-- MAINTENANCE MODE BANNER -->
+  <div style="text-align: center; padding: 50px 20px; max-width: 500px; margin: 60px auto; background: var(--glass-bg); border: 1px solid rgba(236, 213, 103, 0.2); border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);">
+    <div style="font-size: 3.5rem; margin-bottom: 15px; animation: float 4s ease-in-out infinite;">🚧</div>
+    <h2 style="color: var(--accent-teal); font-weight: 900; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: -0.5px;">Temporarily Under Maintenance</h2>
+    <p style="color: var(--text-dim); font-size: 1rem; line-height: 1.6; font-weight: 600; margin: 0;">
+      Due to irregularity in lectures, LecTrack is currently updating its data. Please check back later!
+    </p>
+  </div>
+
+  <div class="top-btn" style="display: none;">
     <button onclick="openAttendance()">Live Attendance</button>
     <button onclick="openCalendar()">Calendar</button>
     <button onclick="openTimeTable()">Time-Table</button>
@@ -34,7 +43,7 @@
   </div>
 
   <div
-    style="display: flex; justify-content: center; margin: -10px auto 25px; gap: 15px; flex-wrap: wrap; padding: 0 20px;">
+    style="display: none; justify-content: center; margin: -10px auto 25px; gap: 15px; flex-wrap: wrap; padding: 0 20px;">
     <button onclick="openAttendanceCalci()"> Attendance Calci</button>
   </div>
 
@@ -43,7 +52,7 @@
     ⚠️ Note: 22 April (Wed) is treated as a holiday
   </div> -->
 
-  <div class="target-toggle">
+  <div class="target-toggle" style="display: none;">
     <label>
       <input type="radio" name="targetPct" value="70" onchange="renderDashboard()"
         style="accent-color: var(--accent-teal);"> 70% Target
@@ -54,10 +63,11 @@
     </label>
   </div>
 
-  <div class="container" id="dashboard"></div>
+  <div class="container" id="dashboard" style="display: none;"></div>
 
   <div id="install-container" style="display: none; text-align: center; margin-top: 20px; margin-bottom: 30px;">
-    <button id="install-btn" style="background: var(--accent-teal); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; border: none; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); transition: transform 0.2s;">
+    <button id="install-btn"
+      style="background: var(--accent-teal); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; border: none; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); transition: transform 0.2s;">
       📲 Install App
     </button>
   </div>
