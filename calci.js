@@ -178,7 +178,7 @@ function updateOverallAttendance() {
   if (el && totalOccurred > 0) {
     const pctValue = (totalPresent / totalOccurred) * 100;
     const color = pctValue >= 75 ? '#10b981' : '#ef4444';
-    el.innerHTML = `Overall Attendance: <span style="color: ${color}">${pctValue.toFixed(2)}%</span> <span style="font-size: 0.8rem; opacity: 0.75;">(${totalPresent}/${totalOccurred})</span>`;
+    el.innerHTML = `Overall Attendance: <span style="color: ${color}">${pctValue.toFixed(2)}%</span>`;
   }
 }
 
