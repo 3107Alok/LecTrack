@@ -174,6 +174,33 @@
       box-shadow: 0 0 15px var(--accent-glow);
     }
 
+    .phase-dropdown {
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--accent-teal);
+      border: 1px solid var(--accent-teal);
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 0 10px var(--accent-glow);
+      transition: var(--transition-core);
+    }
+
+    .phase-dropdown:hover, .phase-dropdown:focus {
+      box-shadow: 0 0 18px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    .phase-dropdown option {
+      background: #141419;
+      color: #fff;
+      font-weight: 600;
+    }
+
     /* CONTAINER */
     .container {
       max-width: 850px;
@@ -809,6 +836,62 @@
       letter-spacing: 0.5px;
     }
 
+    /* Day Override Styles */
+    .cal-day.class-day {
+      background: rgba(56, 189, 248, 0.2) !important;
+      border-color: rgba(56, 189, 248, 0.6) !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25) !important;
+    }
+    .cal-day.class-day .day-label {
+      color: #38bdf8 !important;
+    }
+    .cal-day.has-override::before {
+      content: '✎';
+      position: absolute;
+      top: 2px;
+      right: 3px;
+      font-size: 0.55rem;
+      color: var(--accent-teal);
+      opacity: 0.85;
+    }
+    .cal-day-popup {
+      display: none;
+      position: fixed;
+      z-index: 10001;
+      background: rgba(18, 18, 16, 0.96);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.6);
+      min-width: 200px;
+      max-width: 260px;
+    }
+    .cal-day-popup-title {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--accent-teal);
+      margin-bottom: 8px;
+      text-align: center;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 6px;
+    }
+    .cal-day-popup button {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 0.72rem;
+      margin-bottom: 5px;
+      text-align: left;
+      border-radius: 8px;
+      text-transform: none;
+      letter-spacing: 0.3px;
+    }
+    .cal-day-popup button:last-child {
+      margin-bottom: 0;
+    }
+
     /* THEME SWITCHER */
     .theme-switcher {
       position: absolute;
@@ -932,4 +1015,17 @@
         height: 24px;
         font-size: 0.95rem;
       }
+    }
+
+    /* CA TABLE STYLES */
+    .ca-row {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transition: var(--transition-core);
+      opacity: 0;
+      transform: translateY(15px);
+      animation: slideUpFade 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    .ca-row:hover {
+      background: rgba(255, 255, 255, 0.03);
     }

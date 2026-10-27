@@ -26,33 +26,23 @@
   <h1><span class="shimmer-title">LecTrack</span></h1>
 
 
-  <!-- MAINTENANCE MODE BANNER -->
-  <div style="text-align: center; padding: 50px 20px; max-width: 500px; margin: 60px auto; background: var(--glass-bg); border: 1px solid rgba(236, 213, 103, 0.2); border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);">
-    <div style="font-size: 3.5rem; margin-bottom: 15px; animation: float 4s ease-in-out infinite;">🚧</div>
-    <h2 style="color: var(--accent-teal); font-weight: 900; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: -0.5px;">Temporarily Under Maintenance</h2>
-    <p style="color: var(--text-dim); font-size: 1rem; line-height: 1.6; font-weight: 600; margin: 0;">
-      Due to irregularity in lectures, LecTrack is currently updating its data. Please check back later!
-    </p>
-  </div>
-
-  <div class="top-btn" style="display: none;">
-    <button onclick="openAttendance()">Live Attendance</button>
+  <div class="top-btn">
     <button onclick="openCalendar()">Calendar</button>
     <button onclick="openTimeTable()">Time-Table</button>
-    <button onclick="openDateSheet()">DateSheet</button>
+    <button onclick="openDateSheet()">DateSheet / CA</button>
   </div>
 
   <div
-    style="display: none; justify-content: center; margin: -10px auto 25px; gap: 15px; flex-wrap: wrap; padding: 0 20px;">
+    style="display: flex; justify-content: center; margin: -10px auto 25px; gap: 15px; flex-wrap: wrap; padding: 0 20px;">
     <button onclick="openAttendanceCalci()"> Attendance Calci</button>
   </div>
 
-  <h3 class="last-day" style="display: none;">Last Instruction Day : 7 Dec 2026</h3>
+  <h3 class="last-day">Last Instruction Day : 7 Dec 2026</h3>
   <!-- <div style="text-align: center; font-size: 0.65rem; color: #f59e0b; margin: 0 0 20px; font-weight: 600; opacity: 0.8;">
     ⚠️ Note: 22 April (Wed) is treated as a holiday
   </div> -->
 
-  <div class="target-toggle" style="display: none;">
+  <div class="target-toggle">
     <label>
       <input type="radio" name="targetPct" value="70" onchange="renderDashboard()"
         style="accent-color: var(--accent-teal);"> 70% Target
@@ -63,7 +53,7 @@
     </label>
   </div>
 
-  <div class="container" id="dashboard" style="display: none;"></div>
+  <div class="container" id="dashboard"></div>
 
   <div id="install-container" style="display: none; text-align: center; margin-top: 20px; margin-bottom: 30px;">
     <button id="install-btn"
@@ -101,10 +91,23 @@
   <div class="modal" id="calendarModal">
     <div class="modal-content" style="max-width: 1100px;">
       <span class="close-btn" onclick="closeModal('calendarModal')">✖</span>
-      <h2 style="text-align: center; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.5px;"> <span
+      <h2 style="text-align: center; margin-bottom: 8px; font-weight: 800; letter-spacing: -0.5px;"> <span
           class="shimmer-title">Academic Calendar 2026</span></h2>
+      <div style="text-align: center; font-size: 0.72rem; color: var(--text-dim); margin-bottom: 16px;">
+        💡 Click on any date to change it to <b style="color: #ff4d4d;">Holiday</b>, <b style="color: #f59e0b;">Exam Day</b>, or <b style="color: #38bdf8;">Regular Class</b>. Changes save automatically!
+        <button onclick="resetCalendarOverrides()" style="display: inline-block; margin-left: 10px; padding: 3px 8px; font-size: 0.65rem; border-radius: 8px; text-transform: none; background: rgba(255,255,255,0.08);">Reset Custom Days</button>
+      </div>
       <div id="calendarContent"></div>
     </div>
+  </div>
+
+  <!-- CALENDAR DAY ACTION POPUP -->
+  <div id="calDayPopup" class="cal-day-popup">
+    <div id="calDayPopupTitle" class="cal-day-popup-title">Set Date</div>
+    <button onclick="applyDayOverride('class')" style="color: #38bdf8;">📘 Regular Class Day</button>
+    <button onclick="applyDayOverride('holiday')" style="color: #ff4d4d;">🏖️ Holiday</button>
+    <button onclick="applyDayOverride('exam')" style="color: #f59e0b;">📝 Exam Day</button>
+    <button onclick="applyDayOverride('default')" style="color: var(--text-dim);">↺ Reset to Default</button>
   </div>
 
   <!-- ATTENDANCE CALCULATOR MODAL -->
@@ -113,10 +116,14 @@
       <span class="close-btn" onclick="closeModal('calciModal')">✖</span>
       <h2 style="text-align: center; margin-bottom: 5px; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px;">
         🧮 <span class="shimmer-title">Attendance Calci</span></h2>
-      <p style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 15px; font-weight: 500;">
-        Enter Current Present Count <span id="calciPhaseLabel"
-          style="color: var(--accent-teal); font-weight: 800;"></span>
-      </p>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; font-size: 0.75rem; color: var(--text-dim); font-weight: 500;">
+        <span>Target:</span>
+        <select id="calciPhaseSelector" onchange="setPhase(this.value)" class="phase-dropdown" style="font-size: 0.75rem; padding: 3px 8px;">
+          <option value="mse2">🎯 Till MSE-2 (17 Nov)</option>
+          <option value="ese">🎓 Till ESE (7 Dec)</option>
+        </select>
+        <button onclick="resetCalci()" style="margin-left: 5px; padding: 2px 8px; font-size: 0.65rem; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); cursor: pointer; color: var(--text-dim);">↺ Reset to Actual</button>
+      </div>
       <div id="overall-attendance"
         style="text-align: center; margin-bottom: 12px; font-weight: 800; font-size: 1rem; color: white;">Overall
         Attendance: --%</div>
@@ -151,308 +158,18 @@
     </div>
   </div>
 
+  <!-- MODULAR SCRIPTS -->
+  <script src="data.js"></script>
+  <script src="timetable.js"></script>
+  <script src="calendar.js"></script>
+  <script src="attendance.js"></script>
+  <script src="calci.js"></script>
+  <script src="app.js"></script>
+
   <script>
+    // Initialize Theme and Dashboard on Load
+    initTheme();
 
-    const subjects = {
-      "CS310L": "Theory of Computation",
-      "CS311L": "Software Engineering (SE & DP)",
-      "HS203L": "Aptitude - 3",
-      "HS204L": "Soft Skills",
-      "IT401B": "Advance Databases",
-      "CS312B": "DL and Gen AI",
-      "PE": "Professional Elective",
-      "CS311P": "Software Engineering (SE & DP) Lab",
-      "CS313P": "Problem Solving Lab"
-    };
-
-    // TIME PARSING HELPERS (Global)
-    const GLOBAL_MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    function parseExamTime(timeStr, dateRef) {
-      if (!timeStr || !timeStr.includes('-')) return null;
-      try {
-        const parts = timeStr.split("-");
-        const endPart = parts[1].trim();
-        const match = endPart.match(/(\d+):(\d+)\s*(AM|PM)/i);
-        if (!match) return null;
-
-        let hours = parseInt(match[1]);
-        const mins = parseInt(match[2]);
-        const period = match[3].toUpperCase();
-
-        if (period === "PM" && hours < 12) hours += 12;
-        if (period === "AM" && hours === 12) hours = 0;
-
-        const res = new Date(dateRef);
-        res.setHours(hours, mins, 0, 0);
-        return res;
-      } catch (e) { return null; }
-    }
-
-    function isExamItemCompleted(item) {
-      if (!item.date || !item.time) return false;
-      const now = new Date();
-      const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-      const parts = item.date.split(' ');
-      const day = parseInt(parts[0]);
-      const monthName = parts[1];
-      const monthIdx = GLOBAL_MONTH_NAMES.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
-
-      const examDate = new Date(now.getFullYear(), monthIdx, day);
-
-      if (examDate < todayAtMidnight) return true;
-      if (examDate.getTime() === todayAtMidnight.getTime()) {
-        const endTime = parseExamTime(item.time, now);
-        return endTime && now > endTime;
-      }
-      return false;
-    }
-
-    function getLatestExamEndTime(day, month) {
-      const monStr = GLOBAL_MONTH_NAMES[month].toLowerCase();
-      let latest = null;
-
-      eseData.forEach(item => {
-        if (!item.date) return;
-        const lowerDate = item.date.toLowerCase();
-        if (lowerDate.startsWith(day + " ") && lowerDate.includes(monStr)) {
-          const endTime = parseExamTime(item.time, new Date());
-          if (endTime && (!latest || endTime > latest)) latest = endTime;
-        }
-      });
-      return latest;
-    }
-
-    // CALCI PERSISTENCE
-    let calciState = JSON.parse(localStorage.getItem('lectrack_calci')) || {};
-
-    const pastData = {
-      "CS310L": { present: 0, total: 0 },
-      "CS311L": { present: 0, total: 0 },
-      "HS203L": { present: 0, total: 0 },
-      "HS204L": { present: 0, total: 0 },
-      "IT401B": { present: 0, total: 0 },
-      "CS312B": { present: 0, total: 0 },
-      "PE": { present: 0, total: 0 },
-      "CS311P": { present: 0, total: 0 },
-      "CS313P": { present: 0, total: 0 }
-    };
-
-    // TIMETABLE
-    const timetable = {
-      1: ["CS313P", "CS313P", "PE", "PE", "CS310L", "HS204L", "-", "-"],
-      2: ["PE", "PE", "CS312B", "HS203L", "HS203L", "CS311L", "-", "-"],
-      3: ["IT401B", "CS310L", "PE", "PE", "CS312B", "IT401B", "IT401B", "-"],
-      4: ["CS311L", "CS310L", "CS312B", "CS311P", "CS311P", "IT401B", "CS312B", "CS312B"],
-      5: ["HS204L", "CS310L", "IT401B", "CS313P", "CS313P", "CS311L", "-", "-"]
-    };
-
-    const eseData = [
-      { date: "15 May (Fri)", subject: "Data Analytics", time: "09:30 AM - 12:30 PM" },
-      { date: "18 May (Mon)", subject: "Computer Networks", time: "09:30 AM - 12:30 PM" },
-      { date: "20 May (Wed)", subject: "ANN and Machine Learning", time: "09:30 AM - 12:30 PM" },
-      { date: "22 May (Fri)", subject: "Design and Analysis of Algorithms", time: "09:30 AM - 04:30 PM" },
-      { date: "23 May (Sat)", subject: "Aptitude-2", time: "09:30 AM - 11:30 AM" },
-      { date: "25 May (Mon)", subject: "Professional Elective", time: "09:30 AM - 12:30 PM" },
-      { date: "26 May (Tue)", subject: "Universal Human Values", time: "09:30 AM - 12:30 PM" },
-      { date: "28 May (Thu)", subject: "Web Technology", time: "09:30 AM - 04:30 PM" },
-      { date: "29 May (Fri)", subject: "Soft Skills Essential-2", time: "09:30 AM - 04:30 PM" }
-    ];
-
-    // HOLIDAYS
-    const holidays = [
-      "2026-04-14",
-      "2026-04-20", "2026-04-21", "2026-04-22",
-      "2026-04-23", "2026-04-24", "2026-04-25",
-      "2026-04-27", "2026-04-28",
-      "2026-08-05", "2026-08-06", "2026-08-07",
-      "2026-08-08", "2026-08-09", "2026-08-10",
-      "2026-08-11"
-    ];
-
-    const calendarEvents = [
-      // Holidays
-      { start: "2026-08-04", end: "2026-08-11", type: "holiday", title: "Kanwar Yatra Holiday" },
-      { date: "2026-08-15", type: "holiday", title: "Independence Day" },
-      { date: "2026-08-28", type: "holiday", title: "Raksha Bandhan" },
-      { date: "2026-09-04", type: "holiday", title: "Janmashtami" },
-      { date: "2026-10-02", type: "holiday", title: "Gandhi Jayanti" },
-      { date: "2026-10-20", type: "holiday", title: "Dussehra" },
-      { start: "2026-11-07", end: "2026-11-11", type: "holiday", title: "Diwali Break" },
-      { date: "2026-11-24", type: "holiday", title: "Guru Nanak Jayanti" },
-      { start: "2026-12-08", end: "2026-12-11", type: "holiday", title: "ESE Prep Break" },
-      { date: "2026-12-25", type: "holiday", title: "Christmas" },
-
-      // Exams
-      { start: "2026-09-21", end: "2026-09-26", type: "mse1", title: "MSE-I" },
-      { start: "2026-11-16", end: "2026-11-27", type: "mse2", title: "MSE-II" },
-      { start: "2026-12-14", end: "2026-12-28", type: "ese", title: "End Semester Examination" },
-      { start: "2026-12-26", end: "2027-01-02", type: "practical", title: "ESE Practical" }
-    ];
-
-    const startDate = new Date("2026-08-03");
-    const endDate = new Date("2026-12-07");
-
-    // ⭐ TODAY (important)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // HOLIDAY CHECK — string comparison to avoid UTC timezone issues
-    function isHoliday(date) {
-      let y = date.getFullYear();
-      let m = String(date.getMonth() + 1).padStart(2, '0');
-      let d = String(date.getDate()).padStart(2, '0');
-      let str = y + '-' + m + '-' + d;
-
-      if (holidays.includes(str)) return true;
-
-      const skipTypes = ['holiday', 'mse1', 'mse2', 'ese', 'practical'];
-      for (const event of calendarEvents) {
-        if (skipTypes.includes(event.type)) {
-          if (event.date && event.date === str) return true;
-          if (event.start && event.end && str >= event.start && str <= event.end) return true;
-        }
-      }
-      return false;
-    }
-
-    function getPhaseInfo() {
-      let mse1Event = calendarEvents.find(e => e.type === 'mse1');
-      let mse2Event = calendarEvents.find(e => e.type === 'mse2');
-      const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-
-      if (mse1Event && todayStr < mse1Event.start) {
-        let endD = new Date(mse1Event.start);
-        endD.setDate(endD.getDate() - 1);
-        return { endDate: endD, label: "Target: Till MSE-1", type: "mse1" };
-      } else if (mse2Event && todayStr < mse2Event.start) {
-        let endD = new Date(mse2Event.start);
-        endD.setDate(endD.getDate() - 1);
-        return { endDate: endD, label: "Target: Till MSE-2", type: "mse2" };
-      }
-      return { endDate: new Date("2026-12-07"), label: "Target till Last Instruction Day", type: "final" };
-    }
-
-    // ⭐ FULL FUTURE (ratio ke liye) — counts periods per subject
-    function fullFutureCounts() {
-      const phase = getPhaseInfo();
-      let counts = {};
-      let current = new Date(startDate);
-
-      while (current <= phase.endDate) {
-        let d = current.getDay();
-
-        if (d !== 0 && d !== 6 && !isHoliday(current)) {
-          let classes = timetable[d];
-
-          if (classes) {
-
-            classes.forEach(sub => {
-              counts[sub] = (counts[sub] || 0) + 1;
-            });
-          }
-        }
-
-        current.setDate(current.getDate() + 1);
-      }
-
-      return counts;
-    }
-
-    // ⭐ REMAINING (dynamic) — counts periods, includes today, updates based on time
-    function remainingCounts() {
-      const phase = getPhaseInfo();
-      let counts = {};
-
-      let current = new Date(today); // includes today (midnight)
-      let now = new Date();
-
-      while (current <= phase.endDate) {
-        let d = current.getDay();
-
-        if (d !== 0 && d !== 6 && !isHoliday(current)) {
-          let classes = timetable[d];
-
-          if (classes) {
-            if (current.getTime() === today.getTime()) {
-              // Current day logic: only count classes that haven't occurred yet today based on time
-              const periodEndTimes = [
-                { h: 10, m: 0 }, { h: 10, m: 50 }, { h: 11, m: 40 }, { h: 12, m: 30 }, { h: 13, m: 20 }, // Before Lunch
-                { h: 15, m: 10 }, { h: 16, m: 0 }, { h: 16, m: 50 }  // After Lunch
-              ];
-              const currentH = now.getHours();
-              const currentM = now.getMinutes();
-              const currentTime = currentH * 60 + currentM;
-
-              for (let i = 0; i < classes.length; i++) {
-                const end = periodEndTimes[i].h * 60 + periodEndTimes[i].m;
-                if (currentTime < end) {
-                  counts[classes[i]] = (counts[classes[i]] || 0) + 1;
-                }
-              }
-            } else {
-              // Future days
-              classes.forEach(sub => {
-                counts[sub] = (counts[sub] || 0) + 1;
-              });
-            }
-          }
-        }
-
-        current.setDate(current.getDate() + 1);
-      }
-
-      return counts;
-    }
-
-    const fullFuture = fullFutureCounts();
-    const remaining = remainingCounts();
-
-    const dashboard = document.getElementById("dashboard");
-
-    // RENDER
-    function renderDashboard() {
-      const phase = getPhaseInfo();
-      dashboard.innerHTML = `<div style="width: 100%; text-align: center; color: var(--accent-teal); font-weight: 800; font-size: 1.1rem; margin-bottom: 10px; grid-column: 1 / -1;">${phase.label}</div>`;
-
-      let targetNode = document.querySelector('input[name="targetPct"]:checked');
-      let targetVal = targetNode ? targetNode.value : "75";
-      let multiplier = targetVal === "70" ? 0.70 : 0.75;
-
-      const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
-
-      let delayIndex = 0;
-      for (let sub of sortedSubjects) {
-
-        let past = pastData[sub] || { present: 0, total: 0 };
-
-        let finalTotal = past.total + (fullFuture[sub] || 0);
-        let required = Math.ceil(multiplier * finalTotal);
-
-        let futureLeft = remaining[sub] || 0;
-
-        dashboard.innerHTML += `
-      <div class="card" style="animation-delay: ${delayIndex * 0.05}s;" onclick="showDetails('${sub}')">
-        <div class="row">
-          <div class="subject">${subjects[sub]}</div>
-
-          <div class="ratio">For ${targetVal}%: 
-            <span class="ratio-badge">${required} / ${finalTotal}</span>
-          </div>
-
-          <div class="remaining">${futureLeft} lectures remaining</div>
-        </div>
-      </div>
-    `;
-        delayIndex++;
-      }
-
-      // Save to local storage
-      localStorage.setItem('lectrack_targetPct', targetVal);
-    }
-
-    // Load saved targetPct before initial render
     const savedTarget = localStorage.getItem('lectrack_targetPct');
     if (savedTarget) {
       const radio = document.querySelector(`input[name="targetPct"][value="${savedTarget}"]`);
@@ -460,556 +177,6 @@
     }
 
     renderDashboard();
-
-    // DETAIL VIEW
-    function showDetails(subject) {
-      const phase = getPhaseInfo();
-      let html = "";
-      let current = new Date(today); // Start from today to show remaining lectures
-
-      while (current <= phase.endDate) {
-
-        let d = current.getDay();
-
-        if (d !== 0 && d !== 6 && !isHoliday(current)) {
-          let classes = timetable[d];
-
-          if (classes) {
-            let count = classes.filter(s => s === subject).length;
-
-            if (count > 0) {
-
-              let day = current.toLocaleDateString("en-GB", { day: "numeric" });
-              let month = current.toLocaleDateString("en-GB", { month: "long" });
-              let weekday = current.toLocaleDateString("en-GB", { weekday: "short" });
-
-              html += `
-            <div style="margin-bottom:8px;">
-              📅 ${day} ${month} (${weekday}) ${count} hour${count > 1 ? "s" : ""}
-            </div>
-          `;
-            }
-          }
-        }
-
-        current.setDate(current.getDate() + 1);
-      }
-
-      document.getElementById("modalTitle").innerText = subjects[subject];
-      document.getElementById("modalContent").innerHTML = html;
-      document.getElementById("modal").style.display = "block";
-    }
-
-    // TIME TABLE VIEW
-    function openTimeTable() {
-      const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-      const times = [
-        "09:10-10:00",
-        "10:00-10:50",
-        "10:50-11:40",
-        "11:40-12:30",
-        "12:30-01:20",
-        "01:20-02:20", // Lunch
-        "02:20-03:10",
-        "03:10-04:00",
-        "04:00-04:50"
-      ];
-
-      let html = `<h2 style="text-align: center; margin-bottom: 20px;"><span class="shimmer-title">Time Table CS - 5A</span></h2>
-        <table class="tt-table">
-        <thead>
-          <tr>
-            <th>Day</th>
-            ${times.map(t => `<th>${t}</th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>`;
-
-      days.forEach((dayName, dayIdx) => {
-        const dayKey = dayIdx + 1;
-        html += `<tr>
-          <td class="day-col">${dayName}</td>
-          ${times.map((time, tIdx) => {
-          if (tIdx === 5) {
-            return dayIdx === 0 ? `<td rowspan="5" class="lunch-cell">LUNCH BREAK</td>` : '';
-          }
-          const periodIdx = tIdx < 5 ? tIdx : tIdx - 1;
-          const subCode = (timetable[dayKey] && timetable[dayKey][periodIdx]) || "-";
-          const subName = subjects[subCode] || subCode;
-          return `<td>
-              <div class="sub-code">${subCode}</div>
-              <div class="sub-name">${subName}</div>
-            </td>`;
-        }).join('')}
-        </tr>`;
-      });
-
-      html += `</tbody></table>`;
-
-      document.getElementById("timeTableContent").innerHTML = html;
-      document.getElementById("timeTableModal").style.display = "block";
-    }
-
-    // DATE SHEET VIEW
-    function openDateSheet() {
-      let html = renderDateSheet();
-      document.getElementById("dateSheetContent").innerHTML = html;
-      document.getElementById("dateSheetModal").style.display = "block";
-    }
-
-    // DATE SHEET RENDER
-    function renderDateSheet() {
-      let html = `
-        <div class="mse-header" style="text-align: center; font-size: 1.4rem; margin-bottom: 20px; padding-top: 15px; padding-right: 30px;">📑 <span class="shimmer-title">MSE 1 Date Sheet</span></div>
-        <div style="text-align: center; padding: 40px 20px; font-size: 1.2rem; font-weight: 700; color: var(--text-dim);">
-          Coming Soon...
-        </div>
-      `;
-      return html;
-    }
-
-    // CLOSE
-    function closeModal(id) {
-      document.getElementById(id || 'modal').style.display = "none";
-    }
-
-    // ATTENDANCE CALCULATOR LOGIC (Multi-Course)
-    function openAttendanceCalci() {
-      const phase = getPhaseInfo();
-      document.getElementById('calciPhaseLabel').innerText = `(${phase.label.replace('Target ', '')})`;
-
-      const tbody = document.getElementById('calciBody');
-      tbody.innerHTML = '';
-
-      const fullFuture = fullFutureCounts();
-      const remainFuture = remainingCounts();
-
-      const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
-
-      let delayIndex = 0;
-      for (let code of sortedSubjects) {
-        let past = pastData[code] || { present: 0, total: 0 };
-        let finalTotal = past.total + (fullFuture[code] || 0);
-        let occurred = finalTotal - (remainFuture[code] || 0);
-
-        // Use persisted value if available, else fallback to 100% of occurred (Healthy Score)
-        let currentPresent = calciState[code] !== undefined ? calciState[code] : occurred;
-
-        let tr = document.createElement('tr');
-        tr.className = 'calci-row';
-        tr.style.animationDelay = `${delayIndex * 0.05}s`;
-        tr.innerHTML = `
-          <td>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <div id="health-circle-${code}" style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; flex-shrink: 0;" title="Safe: Target Met"></div>
-              <div class="calci-sub-name" style="margin-bottom: 0;">${subjects[code]}</div>
-            </div>
-          </td>
-          <td class="calci-control">
-            <button class="step-btn" onclick="adjustCalci('${code}', -1, ${finalTotal}, ${occurred})">−</button>
-            <div style="display: flex; align-items: baseline; gap: 4px;">
-              <input type="number" id="input-${code}" class="calci-input" value="${currentPresent}" 
-                     oninput="updateCalciRow('${code}', this.value, ${finalTotal}, ${occurred})" style="width: 45px; padding: 6px 4px;">
-              <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 800; min-width: 25px;">/ ${occurred}</span>
-            </div>
-            <button class="step-btn" onclick="adjustCalci('${code}', 1, ${finalTotal}, ${occurred})">+</button>
-            <span id="pct-${code}" style="font-size: 0.7rem; color: #10b981; min-width: 40px; text-align: right; font-weight: 700;"></span>
-          </td>
-          <td class="calci-res" style="color: var(--text-dim);">${remainFuture[code] || 0}</td>
-          <td id="res70-${code}" class="calci-res">--</td>
-          <td id="res75-${code}" class="calci-res target-75">--</td>
-        `;
-        tbody.appendChild(tr);
-
-        // Initial Calculation
-        updateCalciRow(code, currentPresent, finalTotal, occurred);
-        delayIndex++;
-      }
-
-      document.getElementById('calciModal').style.display = 'block';
-    }
-
-    function updateCalciRow(code, presentVal, finalTotal, occurred) {
-      let present = parseInt(presentVal) || 0;
-      if (present < 0) present = 0;
-      if (present > occurred) present = occurred;
-
-      const input = document.getElementById(`input-${code}`);
-      if (input && parseInt(input.value) !== present) {
-        input.value = present;
-      }
-
-      // Save to persistence
-      calciState[code] = present;
-      localStorage.setItem('lectrack_calci', JSON.stringify(calciState));
-
-      const targets = [70, 75];
-
-      targets.forEach(t => {
-        const threshold = t / 100;
-        const targetId = `res${t}-${code}`;
-        const el = document.getElementById(targetId);
-
-        const required = Math.ceil(threshold * finalTotal);
-        const diff = required - present;
-
-        if (diff <= 0) {
-          el.textContent = "✅ Met";
-          el.className = "calci-res met";
-        } else {
-          el.textContent = `${diff} more`;
-          el.className = t === 70 ? "calci-res needed" : "calci-res target-75";
-        }
-      });
-
-      // Update Health Indicator
-      const phase = getPhaseInfo();
-      let mandatoryTarget = phase.type === 'mse1' ? 0.70 : 0.75;
-      let requiredForMandatory = Math.ceil(mandatoryTarget * finalTotal);
-
-      let futureLeft = finalTotal - occurred;
-      let maxPossible = present + futureLeft;
-
-      let healthColor = "#ef4444";
-      let healthWidth = Math.min((present / requiredForMandatory) * 100, 100);
-      let healthText = `Critical`;
-
-      if (present >= requiredForMandatory) {
-        healthColor = "#10b981"; // Safe
-        healthText = `Safe: Target Met`;
-      } else if (maxPossible >= requiredForMandatory) {
-        healthColor = "#f59e0b"; // On Track
-        healthText = `Possible to Maintain`;
-      } else {
-        healthText = `Danger: Cannot Reach`;
-      }
-
-      const hc = document.getElementById(`health-circle-${code}`);
-      if (hc) {
-        hc.style.background = healthColor;
-        hc.title = healthText;
-      }
-
-      // Individual Percentage
-      const pctEl = document.getElementById(`pct-${code}`);
-      if (pctEl && occurred > 0) {
-        const pctValue = (present / occurred) * 100;
-        pctEl.textContent = `${pctValue.toFixed(1)}%`;
-        pctEl.style.color = pctValue >= 75 ? "#10b981" : "#ef4444";
-      }
-
-      updateOverallAttendance();
-    }
-
-    function updateOverallAttendance() {
-      let totalPercentageSum = 0;
-      let validSubjectsCount = 0;
-
-      const fullFuture = fullFutureCounts();
-      const remainFuture = remainingCounts();
-
-      for (let code in subjects) {
-        let past = pastData[code];
-        if (past) {
-          let finalTotal = past.total + (fullFuture[code] || 0);
-          let occurred = finalTotal - (remainFuture[code] || 0);
-
-          if (occurred > 0) {
-            let present = calciState[code] !== undefined ? calciState[code] : past.present;
-            let subjectPct = (present / occurred) * 100;
-            totalPercentageSum += subjectPct;
-            validSubjectsCount++;
-          }
-        }
-      }
-
-      const el = document.getElementById('overall-attendance');
-      if (el && validSubjectsCount > 0) {
-        const pctValue = totalPercentageSum / validSubjectsCount;
-        const color = pctValue >= 75 ? '#10b981' : '#ef4444';
-        el.innerHTML = `Overall Attendance: <span style="color: ${color}">${pctValue.toFixed(2)}%</span>`;
-      }
-    }
-
-    function adjustCalci(code, delta, finalTotal, occurred) {
-      const input = document.getElementById(`input-${code}`);
-      let val = (parseInt(input.value) || 0) + delta;
-      if (val < 0) val = 0;
-      if (val > occurred) val = occurred;
-      input.value = val;
-      updateCalciRow(code, val, finalTotal, occurred);
-    }
-
-    // CALENDAR LOGIC
-    function openCalendar() {
-      renderCalendar();
-      document.getElementById('calendarModal').style.display = 'block';
-    }
-
-
-    function renderCalendar() {
-      const months = [
-        { month: 7, year: 2026 }, // August
-        { month: 8, year: 2026 }, // September
-        { month: 9, year: 2026 }, // October
-        { month: 10, year: 2026 }, // November
-        { month: 11, year: 2026 }, // December
-        { month: 0, year: 2027 }  // January
-      ];
-
-      let html = '<div class="calendar-container">';
-      months.forEach(m => {
-        html += generateMonthHTML(m.month, m.year);
-      });
-      html += '</div>';
-
-      document.getElementById('calendarContent').innerHTML = html;
-    }
-
-    function generateMonthHTML(month, year) {
-      const date = new Date(year, month, 1);
-      const monthName = date.toLocaleString('en-GB', { month: 'long' });
-      const firstDayRaw = date.getDay(); // 0=Sun, 1=Mon...
-      // New Order: Mon(0), Tue(1), Wed(2), Thu(3), Fri(4), Sat(5), Sun(6)
-      const firstDay = (firstDayRaw === 0) ? 6 : firstDayRaw - 1;
-
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-      let html = `<div class="month-box">
-        <div class="month-name">${monthName} ${year}</div>
-        <div class="calendar-grid">
-          ${dayNames.map(d => `<div class="day-header">${d}</div>`).join('')}`;
-
-      // Empty slots before first day
-      for (let i = 0; i < firstDay; i++) {
-        html += '<div></div>';
-      }
-
-      // Days of the month
-      const now = new Date();
-      const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-      for (let d = 1; d <= daysInMonth; d++) {
-        const current = new Date(year, month, d);
-        let { type, label, title } = getDayType(current);
-        const classes = ['cal-day'];
-
-        // Precise Status Check
-        const isPast = current < todayAtMidnight;
-        const isToday = current.getTime() === todayAtMidnight.getTime();
-        const isExam = type && type !== 'holiday';
-
-        let isFinished = isPast;
-        if (isToday && isExam) {
-          const specificEndTime = getLatestExamEndTime(d, month);
-          if (specificEndTime) {
-            isFinished = now > specificEndTime;
-          } else {
-            isFinished = now.getHours() >= 17; // Default fallback
-          }
-        }
-
-        if (isFinished && isExam && type !== 'mse') {
-          classes.push('completed');
-          label = '✓ ' + label;
-        }
-
-        if (type) classes.push(type);
-
-        let titleAttr = title ? ` title="${title}"` : '';
-        let clickAttr = (title && title !== 'Sunday' && title !== 'Saturday')
-          ? ` onclick="showToast('${title}')" style="cursor: pointer;"`
-          : '';
-
-        html += `<div class="${classes.join(' ')}"${titleAttr}${clickAttr}>
-          ${d}
-          ${label ? `<span class="day-label">${label}</span>` : ''}
-        </div>`;
-      }
-
-      html += '</div></div>';
-      return html;
-    }
-
-    function getDayType(date) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, '0');
-      const d = String(date.getDate()).padStart(2, '0');
-      const dateStr = `${y}-${m}-${d}`;
-      const day = date.getDay(); // 0 is Sunday, 6 is Saturday
-
-      // 1. Check Events Array for exact holidays
-      for (const event of calendarEvents) {
-        if (event.date && event.date === dateStr) {
-          return { type: 'holiday', label: 'H', title: event.title || 'Holiday' };
-        }
-      }
-
-      // 2. Sat/Sun as Holiday (even during exams)
-      if (day === 0) return { type: 'holiday', label: '', title: 'Sunday' };
-      if (day === 6) return { type: 'holiday', label: '', title: 'Saturday' };
-
-      // 3. Check Exam & Holiday Ranges
-      for (const event of calendarEvents) {
-        if (event.start && event.end) {
-          if (dateStr >= event.start && dateStr <= event.end) {
-            if (event.type === 'holiday') return { type: 'holiday', label: 'H', title: event.title };
-            if (event.type === 'mse1') return { type: 'mse', label: 'MSE-1', title: event.title };
-            if (event.type === 'mse2') return { type: 'mse', label: 'MSE-2', title: event.title };
-            if (event.type === 'ese') return { type: 'ese', label: 'ESE', title: event.title };
-            if (event.type === 'practical') return { type: 'practical', label: 'Prac', title: event.title };
-          }
-        }
-      }
-
-      return { type: '', label: '', title: '' };
-    }
-
-    // BUTTON
-    function openAttendance() {
-      window.open("https://cybervidya.pages.dev/");
-    }
-
-    // Close modal when clicking outside
-    window.onclick = function (event) {
-      if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-      }
-    }
-
-    // THEME SWITCHER
-    const themes = {
-      default: { name: 'Default', color: '#ecd567', glow: 'rgba(236, 213, 103, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #2b2d1c 0%, #151611 40%, #0a0a0a 100%)' },
-      ocean: { name: 'Ocean', color: '#06b6d4', glow: 'rgba(6, 182, 212, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #163641 0%, #101920 40%, #0a0a0a 100%)' },
-      forest: { name: 'Forest', color: '#10b981', glow: 'rgba(16, 185, 129, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #183324 0%, #111a15 40%, #0a0a0a 100%)' },
-      sunset: { name: 'Sunset', color: '#f97316', glow: 'rgba(249, 115, 22, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #3d2212 0%, #1a120b 40%, #0a0a0a 100%)' },
-      amethyst: { name: 'Amethyst', color: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #27163d 0%, #130e1a 40%, #0a0a0a 100%)' },
-      custom: { name: 'Custom', color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #162441 0%, #101420 40%, #0a0a0a 100%)' }
-    };
-
-    function toggleThemeMenu() {
-      const menu = document.getElementById('theme-menu');
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function applyTheme(themeKey) {
-      const theme = themes[themeKey];
-      if (!theme) return;
-
-      document.documentElement.style.setProperty('--accent-teal', theme.color);
-      document.documentElement.style.setProperty('--accent-glow', theme.glow);
-      document.documentElement.style.setProperty('--bg-teal', theme.bg);
-
-      document.getElementById('current-theme-name').innerText = theme.name;
-      document.getElementById('current-theme-dot').style.background = theme.color;
-
-      localStorage.setItem('lectrack_theme', themeKey);
-      document.getElementById('theme-menu').style.display = 'none';
-    }
-
-    function initTheme() {
-      const saved = localStorage.getItem('lectrack_theme') || 'default';
-      applyTheme(saved);
-
-      const menu = document.getElementById('theme-menu');
-      menu.innerHTML = '';
-      for (const [key, t] of Object.entries(themes)) {
-        menu.innerHTML += `
-          <div class="theme-option" onclick="applyTheme('${key}')">
-            <div style="width: 12px; height: 12px; border-radius: 50%; background: ${t.color};"></div>
-            <span>${t.name}</span>
-          </div>
-        `;
-      }
-    }
-
-    // Initialize theme on load
-    initTheme();
-
-    // Close theme menu if clicking outside
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest('.theme-switcher')) {
-        const menu = document.getElementById('theme-menu');
-        if (menu && menu.style.display === 'block') {
-          menu.style.display = 'none';
-        }
-      }
-    });
-
-    // Custom Toast Notification for Events
-    function showToast(message) {
-      const existing = document.getElementById('toast-msg');
-      if (existing) existing.remove();
-
-      const toast = document.createElement('div');
-      toast.id = 'toast-msg';
-      toast.innerText = message;
-      toast.style.position = 'fixed';
-      toast.style.bottom = '20px';
-      toast.style.left = '50%';
-      toast.style.transform = 'translateX(-50%)';
-      toast.style.background = 'var(--glass-bg-hover)';
-      toast.style.color = '#fff';
-      toast.style.padding = '12px 24px';
-      toast.style.borderRadius = '30px';
-      toast.style.border = '1px solid var(--accent-teal)';
-      toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
-      toast.style.zIndex = '10000';
-      toast.style.fontSize = '0.9rem';
-      toast.style.fontWeight = '700';
-      toast.style.whiteSpace = 'nowrap';
-      toast.style.opacity = '0';
-      toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-
-      document.body.appendChild(toast);
-
-      setTimeout(() => {
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateX(-50%) translateY(-10px)';
-      }, 10);
-
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(-50%) translateY(0)';
-        setTimeout(() => toast.remove(), 300);
-      }, 2500);
-    }
-
-    // PWA Install Prompt Logic
-    let deferredPrompt;
-    const installContainer = document.getElementById('install-container');
-    const installBtn = document.getElementById('install-btn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installContainer.style.display = 'block';
-    });
-
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        installContainer.style.display = 'none';
-      }
-      deferredPrompt = null;
-    });
-
-    // Register Service Worker for PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(registration => {
-            console.log('SW registered:', registration);
-          })
-          .catch(error => {
-            console.log('SW registration failed:', error);
-          });
-      });
-    }
   </script>
 
 </body>

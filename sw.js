@@ -1,10 +1,16 @@
-const CACHE_NAME = "lectrack-v2";
+const CACHE_NAME = "lectrack-v10";
 const ASSETS = [
   "./",
   "./index.html",
   "./style.css",
   "./manifest.json",
-  "./icon.svg"
+  "./icon.svg",
+  "./data.js",
+  "./timetable.js",
+  "./calendar.js",
+  "./attendance.js",
+  "./calci.js",
+  "./app.js"
 ];
 
 self.addEventListener("install", event => {
