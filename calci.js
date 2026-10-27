@@ -69,8 +69,8 @@ function openAttendanceCalci() {
         <span id="pct-${code}" style="font-size: 0.7rem; color: #10b981; min-width: 40px; text-align: right; font-weight: 700;"></span>
       </td>
       <td class="calci-res" style="color: var(--text-dim);">${remainFuture[code] || 0}</td>
-      <td id="res70-${code}" class="calci-res">--</td>
-      <td id="res75-${code}" class="calci-res target-75">--</td>
+      <td id="res75-${code}" class="calci-res">--</td>
+      <td id="res86-${code}" class="calci-res target-86">--</td>
     `;
     tbody.appendChild(tr);
 
@@ -100,7 +100,7 @@ function updateCalciRow(code, presentVal, finalTotal, occurred) {
   calciState[code] = present;
   localStorage.setItem('lectrack_calci', JSON.stringify(calciState));
 
-  const targets = [70, 75];
+  const targets = [75, 86];
 
   targets.forEach(t => {
     const threshold = t / 100;
@@ -116,13 +116,13 @@ function updateCalciRow(code, presentVal, finalTotal, occurred) {
       el.className = "calci-res met";
     } else {
       el.textContent = `${diff} more`;
-      el.className = t === 70 ? "calci-res needed" : "calci-res target-75";
+      el.className = t === 75 ? "calci-res needed" : "calci-res target-86";
     }
   });
 
   // Update Health Indicator
   const phase = getPhaseInfo();
-  let mandatoryTarget = phase.type === 'mse1' ? 0.70 : 0.75;
+  let mandatoryTarget = 0.75;
   let requiredForMandatory = Math.ceil(mandatoryTarget * finalTotal);
 
   let futureLeft = finalTotal - occurred;

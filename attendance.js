@@ -154,7 +154,7 @@ function renderDashboard() {
 
   let targetNode = document.querySelector('input[name="targetPct"]:checked');
   let targetVal = targetNode ? targetNode.value : "75";
-  let multiplier = targetVal === "70" ? 0.70 : 0.75;
+  let multiplier = targetVal === "86" ? 0.86 : 0.75;
 
   const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
   const todayElapsed = (typeof getTodayElapsedClasses === 'function') ? getTodayElapsedClasses() : {};

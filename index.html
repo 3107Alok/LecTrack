@@ -44,12 +44,12 @@
 
   <div class="target-toggle">
     <label>
-      <input type="radio" name="targetPct" value="70" onchange="renderDashboard()"
-        style="accent-color: var(--accent-teal);"> 70% Target
-    </label>
-    <label>
       <input type="radio" name="targetPct" value="75" checked onchange="renderDashboard()"
         style="accent-color: var(--accent-teal);"> 75% Target
+    </label>
+    <label>
+      <input type="radio" name="targetPct" value="86" onchange="renderDashboard()"
+        style="accent-color: var(--accent-teal);"> 86% Target
     </label>
   </div>
 
@@ -146,8 +146,8 @@
               <th style="text-align: left;">Subject</th>
               <th>Current Present & Percentage</th>
               <th>Remaining Lectures</th>
-              <th>For 70%</th>
               <th>For 75%</th>
+              <th>For 86%</th>
             </tr>
           </thead>
           <tbody id="calciBody">
@@ -171,9 +171,11 @@
     initTheme();
 
     const savedTarget = localStorage.getItem('lectrack_targetPct');
-    if (savedTarget) {
+    if (savedTarget && (savedTarget === '75' || savedTarget === '86')) {
       const radio = document.querySelector(`input[name="targetPct"][value="${savedTarget}"]`);
       if (radio) radio.checked = true;
+    } else {
+      localStorage.setItem('lectrack_targetPct', '75');
     }
 
     renderDashboard();
