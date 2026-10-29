@@ -19,6 +19,10 @@ const GLOBAL_MONTH_NAMES = ["January", "February", "March", "April", "May", "Jun
 const startDate = new Date("2026-08-03");
 const endDate = new Date("2026-12-07");
 
+// Baseline date when pastData was recorded (Tuesday, 27 October 2026)
+const pastDataDate = new Date("2026-10-27");
+pastDataDate.setHours(0, 0, 0, 0);
+
 // Today (midnight normalized)
 const today = new Date();
 today.setHours(0, 0, 0, 0);

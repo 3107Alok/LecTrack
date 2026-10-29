@@ -74,8 +74,9 @@ function remainingCounts() {
   const phase = getPhaseInfo();
   let counts = {};
 
-  let current = new Date(today);
   let now = new Date();
+  let todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let current = new Date(todayMid);
 
   while (current <= phase.endDate) {
     let d = current.getDay();
@@ -84,22 +85,27 @@ function remainingCounts() {
       let classes = timetable[d];
 
       if (classes) {
-        if (current.getTime() === today.getTime()) {
+        if (current.getTime() === todayMid.getTime()) {
           // Current day logic: only count classes that haven't occurred yet today based on time
           const currentH = now.getHours();
           const currentM = now.getMinutes();
           const currentTime = currentH * 60 + currentM;
 
           for (let i = 0; i < classes.length; i++) {
-            const end = periodEndTimes[i].h * 60 + periodEndTimes[i].m;
-            if (currentTime < end) {
-              counts[classes[i]] = (counts[classes[i]] || 0) + 1;
+            let sub = classes[i];
+            if (sub && sub !== '-') {
+              const end = periodEndTimes[i].h * 60 + periodEndTimes[i].m;
+              if (currentTime < end) {
+                counts[sub] = (counts[sub] || 0) + 1;
+              }
             }
           }
         } else {
           // Future days
           classes.forEach(sub => {
-            counts[sub] = (counts[sub] || 0) + 1;
+            if (sub && sub !== '-') {
+              counts[sub] = (counts[sub] || 0) + 1;
+            }
           });
         }
       }
@@ -111,23 +117,50 @@ function remainingCounts() {
   return counts;
 }
 
-// Classes finished earlier today based on current time
-function getTodayElapsedClasses() {
+// All lectures held since pastDataDate up to current moment
+function getElapsedClasses() {
   let elapsed = {};
-  let d = today.getDay();
-  if (d === 0 || d === 6 || isHoliday(today)) return elapsed;
-  let classes = timetable[d];
-  if (!classes) return elapsed;
-
   let now = new Date();
+  let todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let currentTime = now.getHours() * 60 + now.getMinutes();
-  for (let i = 0; i < classes.length; i++) {
-    const end = periodEndTimes[i].h * 60 + periodEndTimes[i].m;
-    if (currentTime >= end && classes[i] !== '-') {
-      elapsed[classes[i]] = (elapsed[classes[i]] || 0) + 1;
+
+  let baseDate = (typeof pastDataDate !== 'undefined') ? new Date(pastDataDate) : new Date("2026-10-27");
+  let current = new Date(baseDate);
+  current.setDate(current.getDate() + 1); // Start from day after pastData baseline
+
+  while (current <= todayMid) {
+    let d = current.getDay();
+
+    if (d !== 0 && d !== 6 && !isHoliday(current)) {
+      let classes = timetable[d];
+      if (classes) {
+        let isToday = (current.getTime() === todayMid.getTime());
+        for (let i = 0; i < classes.length; i++) {
+          let sub = classes[i];
+          if (sub && sub !== '-') {
+            if (isToday) {
+              const end = periodEndTimes[i].h * 60 + periodEndTimes[i].m;
+              if (currentTime >= end) {
+                elapsed[sub] = (elapsed[sub] || 0) + 1;
+              }
+            } else {
+              // Past day: entire lecture occurred
+              elapsed[sub] = (elapsed[sub] || 0) + 1;
+            }
+          }
+        }
+      }
     }
+
+    current.setDate(current.getDate() + 1);
   }
+
   return elapsed;
+}
+
+// Backward compatibility alias
+function getTodayElapsedClasses() {
+  return getElapsedClasses();
 }
 
 let fullFuture = fullFutureCounts();
@@ -157,13 +190,13 @@ function renderDashboard() {
   let multiplier = targetVal === "86" ? 0.86 : 0.75;
 
   const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
-  const todayElapsed = (typeof getTodayElapsedClasses === 'function') ? getTodayElapsedClasses() : {};
+  const elapsedClasses = getElapsedClasses();
 
   let delayIndex = 0;
   for (let sub of sortedSubjects) {
     let past = pastData[sub] || { present: 0, total: 0 };
-    let elapsedToday = todayElapsed[sub] || 0;
-    let finalTotal = past.total + elapsedToday + (remaining[sub] || 0);
+    let elapsed = elapsedClasses[sub] || 0;
+    let finalTotal = past.total + elapsed + (remaining[sub] || 0);
     let required = Math.ceil(multiplier * finalTotal);
     let futureLeft = remaining[sub] || 0;
 
@@ -190,9 +223,10 @@ function renderDashboard() {
 function showDetails(subject) {
   const phase = getPhaseInfo();
   let html = "";
-  let current = new Date(today);
-
   let now = new Date();
+  let todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let current = new Date(todayMid);
+
   let currentH = now.getHours();
   let currentM = now.getMinutes();
   let currentTime = currentH * 60 + currentM;
@@ -204,7 +238,7 @@ function showDetails(subject) {
       let classes = timetable[d];
       if (classes) {
         let count = 0;
-        if (current.getTime() === today.getTime()) {
+        if (current.getTime() === todayMid.getTime()) {
           // Today: only count periods whose end time has not passed yet
           for (let i = 0; i < classes.length; i++) {
             if (classes[i] === subject) {

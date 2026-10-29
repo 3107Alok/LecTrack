@@ -1,19 +1,24 @@
 // ATTENDANCE CALCULATOR MODULE
+const CALCI_VERSION = "v3";
+if (localStorage.getItem('lectrack_calci_version') !== CALCI_VERSION) {
+  localStorage.removeItem('lectrack_calci');
+  localStorage.setItem('lectrack_calci_version', CALCI_VERSION);
+}
 let calciState = JSON.parse(localStorage.getItem('lectrack_calci')) || {};
 
 // If calciState is empty or has zeroes when pastData has values, clean or sync it
 function getInitialPresent(code, occurred) {
   let past = (typeof pastData !== 'undefined' && pastData[code]) ? pastData[code] : { present: 0, total: 0 };
-  let elapsed = (typeof getTodayElapsedClasses === 'function') ? (getTodayElapsedClasses()[code] || 0) : 0;
+  let elapsed = (typeof getElapsedClasses === 'function') ? (getElapsedClasses()[code] || 0) : 0;
   let basePresent = past.present + elapsed;
 
   if (calciState[code] !== undefined && calciState[code] !== null && calciState[code] !== "") {
     let saved = parseInt(calciState[code]);
-    if (!isNaN(saved) && (saved > 0 || basePresent === 0)) {
+    if (!isNaN(saved) && saved >= 0 && saved <= occurred) {
       return saved;
     }
   }
-  return basePresent;
+  return Math.min(basePresent, occurred);
 }
 
 function resetCalci() {
@@ -31,22 +36,20 @@ function openAttendanceCalci() {
   if (!tbody) return;
   tbody.innerHTML = '';
 
-  fullFuture = fullFutureCounts();
   const remainFuture = remainingCounts();
-  const todayElapsed = (typeof getTodayElapsedClasses === 'function') ? getTodayElapsedClasses() : {};
+  const elapsedClasses = (typeof getElapsedClasses === 'function') ? getElapsedClasses() : {};
 
   const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
 
   let delayIndex = 0;
   for (let code of sortedSubjects) {
     let past = pastData[code] || { present: 0, total: 0 };
-    let elapsedToday = todayElapsed[code] || 0;
-    let occurred = past.total + elapsedToday; // Actual lectures held till current time today
-    let finalTotal = past.total + (remainFuture[code] || 0) + elapsedToday;
+    let elapsed = elapsedClasses[code] || 0;
+    let occurred = past.total + elapsed; // Actual lectures held till current time today
+    let finalTotal = occurred + (remainFuture[code] || 0);
 
     // Use persisted value if user manually edited it, else default to actual present count including today
     let currentPresent = getInitialPresent(code, occurred);
-    calciState[code] = currentPresent;
 
     let tr = document.createElement('tr');
     tr.className = 'calci-row';
@@ -62,7 +65,7 @@ function openAttendanceCalci() {
         <button class="step-btn" onclick="adjustCalci('${code}', -1, ${finalTotal}, ${occurred})">−</button>
         <div style="display: flex; align-items: baseline; gap: 4px;">
           <input type="number" id="input-${code}" class="calci-input" value="${currentPresent}" 
-                 oninput="updateCalciRow('${code}', this.value, ${finalTotal}, ${occurred})" style="width: 45px; padding: 6px 4px;">
+                 oninput="updateCalciRow('${code}', this.value, ${finalTotal}, ${occurred}, true)" style="width: 45px; padding: 6px 4px;">
           <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 800; min-width: 25px;">/ ${occurred}</span>
         </div>
         <button class="step-btn" onclick="adjustCalci('${code}', 1, ${finalTotal}, ${occurred})">+</button>
@@ -74,8 +77,8 @@ function openAttendanceCalci() {
     `;
     tbody.appendChild(tr);
 
-    // Initial Calculation for row
-    updateCalciRow(code, currentPresent, finalTotal, occurred);
+    // Initial Calculation for row without forcing storage write
+    updateCalciRow(code, currentPresent, finalTotal, occurred, false);
     delayIndex++;
   }
 
@@ -86,7 +89,7 @@ function openAttendanceCalci() {
   if (modal) modal.style.display = 'block';
 }
 
-function updateCalciRow(code, presentVal, finalTotal, occurred) {
+function updateCalciRow(code, presentVal, finalTotal, occurred, saveToStorage = true) {
   let present = parseInt(presentVal) || 0;
   if (present < 0) present = 0;
   if (present > occurred) present = occurred;
@@ -96,9 +99,11 @@ function updateCalciRow(code, presentVal, finalTotal, occurred) {
     input.value = present;
   }
 
-  // Save to persistence
-  calciState[code] = present;
-  localStorage.setItem('lectrack_calci', JSON.stringify(calciState));
+  // Save to persistence only if explicitly edited by user
+  if (saveToStorage) {
+    calciState[code] = present;
+    localStorage.setItem('lectrack_calci', JSON.stringify(calciState));
+  }
 
   const targets = [75, 86];
 
@@ -161,13 +166,13 @@ function updateCalciRow(code, presentVal, finalTotal, occurred) {
 function updateOverallAttendance() {
   let totalPresent = 0;
   let totalOccurred = 0;
-  const todayElapsed = (typeof getTodayElapsedClasses === 'function') ? getTodayElapsedClasses() : {};
+  const elapsedClasses = (typeof getElapsedClasses === 'function') ? getElapsedClasses() : {};
 
   for (let code in subjects) {
     let past = pastData[code];
     if (past && past.total > 0) {
-      let elapsedToday = todayElapsed[code] || 0;
-      let occurred = past.total + elapsedToday;
+      let elapsed = elapsedClasses[code] || 0;
+      let occurred = past.total + elapsed;
       let present = getInitialPresent(code, occurred);
       totalPresent += present;
       totalOccurred += occurred;
@@ -189,5 +194,5 @@ function adjustCalci(code, delta, finalTotal, occurred) {
   if (val < 0) val = 0;
   if (val > occurred) val = occurred;
   input.value = val;
-  updateCalciRow(code, val, finalTotal, occurred);
+  updateCalciRow(code, val, finalTotal, occurred, true);
 }

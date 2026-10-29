@@ -210,3 +210,18 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+
+// Live update according to time: periodically re-render when lecture boundary passes
+let lastElapsedSnapshot = (typeof getElapsedClasses === 'function') ? JSON.stringify(getElapsedClasses()) : '';
+setInterval(() => {
+  if (typeof getElapsedClasses !== 'function') return;
+  const currentElapsed = JSON.stringify(getElapsedClasses());
+  if (currentElapsed !== lastElapsedSnapshot) {
+    lastElapsedSnapshot = currentElapsed;
+    if (typeof renderDashboard === 'function') renderDashboard();
+    const calciModal = document.getElementById('calciModal');
+    if (calciModal && calciModal.style.display === 'block' && typeof openAttendanceCalci === 'function') {
+      openAttendanceCalci();
+    }
+  }
+}, 30000);
