@@ -3,12 +3,12 @@
 const pastData = {
   "CS310L": { present: 38, total: 38 },
   "CS311L": { present: 27, total: 27 },
-  "HS203L": { present: 16, total: 16 },
+  "HS203L": { present: 18, total: 18 },
   "HS204L": { present: 16, total: 16 },
   "IT401B": { present: 48, total: 49 },
-  "CS312B": { present: 49, total: 49 },
-  "PE": { present: 54, total: 56 },
-  "CS311P": { present: 22, total: 22 },
+  "CS312B": { present: 48, total: 48 },
+  "PE": { present: 56, total: 58 },
+  "CS311P": { present: 18, total: 18 },
   "CS313P": { present: 40, total: 42 }
 };
 
