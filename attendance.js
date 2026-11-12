@@ -2,11 +2,11 @@
 // Recorded attendance data (actual classes held & attended till date)
 const pastData = {
   "CS310L": { present: 38, total: 38 },
-  "CS311L": { present: 27, total: 27 },
+  "CS311L": { present: 28, total: 28 },
   "HS203L": { present: 18, total: 18 },
   "HS204L": { present: 16, total: 16 },
   "IT401B": { present: 47, total: 48 },
-  "CS312B": { present: 48, total: 48 },
+  "CS312B": { present: 46, total: 46 },
   "PE": { present: 56, total: 58 },
   "CS311P": { present: 18, total: 18 },
   "CS313P": { present: 40, total: 42 }
