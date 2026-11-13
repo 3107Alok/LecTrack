@@ -196,3 +196,262 @@ function adjustCalci(code, delta, finalTotal, occurred) {
   input.value = val;
   updateCalciRow(code, val, finalTotal, occurred, true);
 }
+
+// ==========================================
+// LAST DAY TO ATTEND MODULE (Till ESE - 7 Dec)
+// ==========================================
+
+const periodTimeSlots = [
+  "09:10 - 10:00 AM",
+  "10:00 - 10:50 AM",
+  "10:50 - 11:40 AM",
+  "11:40 AM - 12:30 PM",
+  "12:30 - 01:20 PM",
+  "02:20 - 03:10 PM",
+  "03:10 - 04:00 PM",
+  "04:00 - 04:50 PM"
+];
+
+let currentLastDayTarget = 75;
+
+function openLastDayModal(target = 75) {
+  currentLastDayTarget = target;
+  switchLastDayTarget(currentLastDayTarget);
+  const modal = document.getElementById('lastDayModal');
+  if (modal) modal.style.display = 'block';
+}
+
+function switchLastDayTarget(target) {
+  currentLastDayTarget = target;
+
+  const btn75 = document.getElementById('lastDayTab75');
+  const btn86 = document.getElementById('lastDayTab86');
+  if (btn75) btn75.classList.toggle('active', target === 75);
+  if (btn86) btn86.classList.toggle('active', target === 86);
+
+  renderLastDayView(target);
+}
+
+function calculateLastDaySchedule(targetPct) {
+  const eseEndDate = new Date("2026-12-07");
+  const now = new Date();
+  const todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+
+  const elapsedClasses = (typeof getElapsedClasses === 'function') ? getElapsedClasses() : {};
+
+  // 1. Calculate remaining scheduled classes till 7 Dec
+  let remainEse = {};
+  let current = new Date(todayMid);
+  while (current <= eseEndDate) {
+    let d = current.getDay();
+    if (d !== 0 && d !== 6 && !isHoliday(current)) {
+      let classes = timetable[d];
+      if (classes) {
+        let isToday = (current.getTime() === todayMid.getTime());
+        for (let i = 0; i < classes.length; i++) {
+          let sub = classes[i];
+          if (sub && sub !== '-') {
+            if (isToday) {
+              const end = periodEndTimes[i].h * 60 + periodEndTimes[i].m;
+              if (currentTime >= end) continue;
+            }
+            remainEse[sub] = (remainEse[sub] || 0) + 1;
+          }
+        }
+      }
+    }
+    current.setDate(current.getDate() + 1);
+  }
+
+  // 2. Build target info based on Calci live inputs / state
+  let targetInfo = {};
+  const sortedSubjects = Object.keys(subjects).sort((a, b) => subjects[a].localeCompare(subjects[b]));
+
+  for (let code of sortedSubjects) {
+    let past = pastData[code] || { present: 0, total: 0 };
+    let elapsed = elapsedClasses[code] || 0;
+    let occurred = past.total + elapsed;
+    let remain = remainEse[code] || 0;
+    let totalEse = occurred + remain;
+
+    // Read directly from user input if Calci modal is open, else fallback to initial/persisted
+    let present = getInitialPresent(code, occurred);
+    const inputEl = document.getElementById(`input-${code}`);
+    if (inputEl) {
+      let liveVal = parseInt(inputEl.value);
+      if (!isNaN(liveVal) && liveVal >= 0) present = liveVal;
+    }
+
+    let required = Math.ceil((targetPct / 100) * totalEse);
+    let needed = Math.max(0, required - present);
+
+    targetInfo[code] = {
+      code,
+      name: subjects[code],
+      occurred,
+      remain,
+      totalEse,
+      present,
+      required,
+      needed,
+      attendedSoFar: 0,
+      lastLecture: null,
+      status: needed === 0 ? 'met' : 'pending'
+    };
+  }
+
+  // 3. Chronological walk to determine exact lecture date & period
+  current = new Date(todayMid);
+  while (current <= eseEndDate) {
+    let d = current.getDay();
+    if (d !== 0 && d !== 6 && !isHoliday(current)) {
+      let classes = timetable[d];
+      if (classes) {
+        let isToday = (current.getTime() === todayMid.getTime());
+        for (let i = 0; i < classes.length; i++) {
+          let sub = classes[i];
+          if (sub && sub !== '-') {
+            if (isToday) {
+              const end = periodEndTimes[i].h * 60 + periodEndTimes[i].m;
+              if (currentTime >= end) continue;
+            }
+
+            let info = targetInfo[sub];
+            if (info && info.status === 'pending') {
+              info.attendedSoFar++;
+              if (info.attendedSoFar === info.needed) {
+                info.status = 'reached';
+                const sortDate = new Date(current);
+                sortDate.setHours(periodEndTimes[i].h, periodEndTimes[i].m, 0, 0);
+                info.lastLecture = {
+                  date: new Date(current),
+                  sortTime: sortDate.getTime(),
+                  dateStr: current.toLocaleDateString("en-GB", { day: "numeric", month: "short" }),
+                  dayStr: current.toLocaleDateString("en-GB", { weekday: "short" }),
+                  periodNum: i + 1,
+                  timeSlot: periodTimeSlots[i]
+                };
+              }
+            }
+          }
+        }
+      }
+    }
+    current.setDate(current.getDate() + 1);
+  }
+
+  let latestLecture = null;
+  let allMet = true;
+  let hasUnreachable = false;
+
+  for (let code of sortedSubjects) {
+    let info = targetInfo[code];
+    if (info.status === 'pending') {
+      info.status = 'unreachable';
+      hasUnreachable = true;
+      allMet = false;
+    } else if (info.status === 'reached') {
+      allMet = false;
+      if (!latestLecture || info.lastLecture.sortTime > latestLecture.sortTime) {
+        latestLecture = {
+          ...info.lastLecture,
+          subjectCode: code,
+          subjectName: info.name
+        };
+      }
+    }
+  }
+
+  return { targetInfo, latestLecture, allMet, hasUnreachable, sortedSubjects };
+}
+
+function renderLastDayView(targetPct) {
+  const heroEl = document.getElementById('lastDayHero');
+  const tbodyEl = document.getElementById('lastDayBody');
+  if (!heroEl || !tbodyEl) return;
+
+  const { targetInfo, latestLecture, allMet, hasUnreachable, sortedSubjects } = calculateLastDaySchedule(targetPct);
+
+  // Clean, minimal hero banner
+  if (allMet) {
+    heroEl.innerHTML = `
+      <div class="lastday-hero-card" style="border-color: rgba(16, 185, 129, 0.4); padding: 12px 16px;">
+        <div class="lastday-hero-main" style="color: #10b981; font-size: 1.15rem;">🎉 All Targets Met (${targetPct}%)</div>
+        <div class="lastday-hero-sub">You can safely bunk all remaining classes till ESE (7 Dec).</div>
+      </div>
+    `;
+  } else if (latestLecture) {
+    heroEl.innerHTML = `
+      <div class="lastday-hero-card" style="padding: 12px 16px;">
+        <div class="lastday-hero-title">Overall Last Lecture to Attend (${targetPct}%)</div>
+        <div class="lastday-hero-main" style="color: var(--accent-teal);">📅 ${latestLecture.dateStr} (${latestLecture.dayStr})</div>
+        <div class="lastday-hero-sub">
+          <b style="color: #fff;">${latestLecture.subjectName}</b> • Period ${latestLecture.periodNum} (${latestLecture.timeSlot})
+        </div>
+      </div>
+    `;
+  } else if (hasUnreachable) {
+    heroEl.innerHTML = `
+      <div class="lastday-hero-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08); padding: 12px 16px;">
+        <div class="lastday-hero-main" style="font-size: 1rem; color: #ef4444;">⚠️ Target ${targetPct}% Unreachable</div>
+        <div class="lastday-hero-sub">Some subjects cannot reach ${targetPct}% even with 100% attendance.</div>
+      </div>
+    `;
+  }
+
+  // Clean, minimal subject rows
+  tbodyEl.innerHTML = '';
+  for (let code of sortedSubjects) {
+    let info = targetInfo[code];
+    let tr = document.createElement('tr');
+    tr.className = 'calci-row';
+
+    let lastLectureHtml = '';
+    if (info.status === 'met') {
+      lastLectureHtml = `
+        <div style="text-align: right; padding-right: 10px;">
+          <span style="color: #10b981; font-weight: 800; font-size: 0.75rem;">✅ Met</span>
+        </div>
+      `;
+    } else if (info.status === 'reached' && info.lastLecture) {
+      lastLectureHtml = `
+        <div style="text-align: right; padding-right: 10px;">
+          <div style="font-weight: 800; color: var(--accent-teal); font-size: 0.78rem;">
+            ${info.lastLecture.dateStr} (${info.lastLecture.dayStr})
+          </div>
+          <div style="font-size: 0.65rem; color: var(--text-dim); font-weight: 600;">
+            P${info.lastLecture.periodNum} • ${info.lastLecture.timeSlot}
+          </div>
+        </div>
+      `;
+    } else {
+      let maxPoss = info.present + info.remain;
+      let maxPct = info.totalEse > 0 ? ((maxPoss / info.totalEse) * 100).toFixed(1) : 0;
+      lastLectureHtml = `
+        <div style="text-align: right; padding-right: 10px;">
+          <span style="color: #ef4444; font-weight: 800; font-size: 0.75rem;">⚠️ Max ${maxPct}%</span>
+        </div>
+      `;
+    }
+
+    let pctVal = info.totalEse > 0 ? ((info.present / info.totalEse) * 100).toFixed(1) : 0;
+
+    tr.innerHTML = `
+      <td>
+        <div class="calci-sub-name" style="margin-bottom: 0;">${info.name}</div>
+      </td>
+      <td style="text-align: center;">
+        <span style="font-weight: 700; font-size: 0.75rem; color: #fff;">${info.present} / ${info.totalEse}</span>
+        <div style="font-size: 0.65rem; color: ${pctVal >= targetPct ? '#10b981' : 'var(--text-dim)'}; font-weight: 700;">${pctVal}%</div>
+      </td>
+      <td style="text-align: center;">
+        ${info.needed === 0 ? '<span style="color: #10b981; font-weight: 800; font-size: 0.75rem;">0</span>' : `<span style="color: var(--accent-teal); font-weight: 800; font-size: 0.78rem;">${info.needed}</span>`}
+      </td>
+      <td>
+        ${lastLectureHtml}
+      </td>
+    `;
+    tbodyEl.appendChild(tr);
+  }
+}

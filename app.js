@@ -12,69 +12,6 @@ window.onclick = function (event) {
   }
 };
 
-// Date sheet view & render
-function openDateSheet() {
-  const container = document.getElementById("dateSheetContent");
-  if (container) container.innerHTML = renderDateSheet();
-  const modal = document.getElementById("dateSheetModal");
-  if (modal) modal.style.display = "block";
-}
-
-function renderDateSheet() {
-  const schedule = (typeof caSchedule !== 'undefined') ? caSchedule : [];
-
-  let rowsHtml = schedule.map((item, idx) => {
-    const isLab = item.type && item.type.includes("Lab");
-    const badgeColor = isLab ? "#06b6d4" : "#10b981";
-    const badgeBg = isLab ? "rgba(6, 182, 212, 0.15)" : "rgba(16, 185, 129, 0.15)";
-    const badgeBorder = isLab ? "rgba(6, 182, 212, 0.3)" : "rgba(16, 185, 129, 0.3)";
-
-    return `
-      <tr class="ca-row" style="animation-delay: ${idx * 0.05}s;">
-        <td style="text-align: left; padding: 12px 14px;">
-          <div style="font-weight: 800; color: #fff; font-size: 0.9rem;">${item.subject}</div>
-          <div style="font-size: 0.72rem; color: var(--text-dim); font-weight: 600;">Code: ${item.code}</div>
-        </td>
-        <td style="padding: 12px 10px; font-weight: 700; color: var(--accent-teal); font-size: 0.85rem;">
-          📅 ${item.date}
-          <div style="font-size: 0.72rem; color: var(--text-dim); font-weight: 600;">(${item.day})</div>
-        </td>
-        <td style="padding: 12px 10px; text-align: center;">
-          <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 800; background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder};">
-            ${item.type}
-          </span>
-        </td>
-      </tr>
-    `;
-  }).join('');
-
-  return `
-    <div class="mse-header" style="text-align: center; font-size: 1.35rem; margin-bottom: 8px; padding-top: 10px; font-weight: 800; letter-spacing: -0.5px;">
-      📝 <span class="shimmer-title">Continuous Assessment (CA)</span>
-    </div>
-    <div style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 20px; font-weight: 500;">
-      Upcoming CA Tests & Evaluation Schedule
-    </div>
-    <div class="ca-table-wrapper" style="overflow-x: auto; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--glass-bg);">
-      <table style="width: 100%; border-collapse: collapse; text-align: left;">
-        <thead>
-          <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.03);">
-            <th style="padding: 12px 14px; font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); font-weight: 800; letter-spacing: 0.5px;">Subject</th>
-            <th style="padding: 12px 10px; font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); font-weight: 800; letter-spacing: 0.5px;">Date & Day</th>
-            <th style="padding: 12px 10px; text-align: center; font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); font-weight: 800; letter-spacing: 0.5px;">Assessment Type</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-      </table>
-    </div>
-    <div style="margin-top: 15px; text-align: center; font-size: 0.7rem; color: var(--text-dim);">
-      💡 MSE-2 Examination: <b style="color: #f59e0b;">18 Nov – 26 Nov 2026</b>
-    </div>
-  `;
-}
-
 // Theme Switcher Logic
 const themes = {
   default: { name: 'Default', color: '#ecd567', glow: 'rgba(236, 213, 103, 0.25)', bg: 'radial-gradient(circle at 50% 0%, #2b2d1c 0%, #151611 40%, #0a0a0a 100%)' },

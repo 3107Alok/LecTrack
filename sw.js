@@ -1,4 +1,4 @@
-const CACHE_NAME = "lectrack-v18";
+const CACHE_NAME = "lectrack-v19";
 const ASSETS = [
   "./",
   "./index.html",

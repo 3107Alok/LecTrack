@@ -80,35 +80,3 @@ function parseExamTime(timeStr, dateRef) {
     return res;
   } catch (e) { return null; }
 }
-
-// Continuous Assessment (CA) Schedule
-const caSchedule = [
-  {
-    subject: "Software Engineering (SE & DP)",
-    code: "CS311L",
-    date: "29 October 2026",
-    day: "Thursday",
-    type: "Theory CA"
-  },
-  {
-    subject: "Deep Learning & Gen AI",
-    code: "CS312B",
-    date: "29 October 2026",
-    day: "Thursday",
-    type: "Theory CA"
-  },
-  {
-    subject: "Theory of Computation (TOC)",
-    code: "CS310L",
-    date: "2 November 2026",
-    day: "Monday",
-    type: "Theory CA"
-  },
-  {
-    subject: "Software Engineering Lab",
-    code: "CS311P",
-    date: "2 - 3 November 2026",
-    day: "Mon - Tue",
-    type: "Lab CA"
-  }
-];

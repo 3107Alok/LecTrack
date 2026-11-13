@@ -1029,3 +1029,62 @@
     .ca-row:hover {
       background: rgba(255, 255, 255, 0.03);
     }
+
+    /* LAST DAY TO ATTEND STYLES */
+    .lastday-tab-btn {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-dim);
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-core);
+    }
+
+    .lastday-tab-btn:hover {
+      background: var(--glass-bg-hover);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .lastday-tab-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-teal);
+      color: var(--accent-teal);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .lastday-hero-card {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(16, 185, 129, 0.05) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 16px;
+      padding: 16px 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lastday-hero-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--accent-teal);
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .lastday-hero-main {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .lastday-hero-sub {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-weight: 600;
+    }

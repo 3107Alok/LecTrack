@@ -29,7 +29,7 @@
   <div class="top-btn">
     <button onclick="openCalendar()">Calendar</button>
     <button onclick="openTimeTable()">Time-Table</button>
-    <button onclick="openDateSheet()">DateSheet / CA</button>
+    <button onclick="openLastDayModal()">Last Day to Attend</button>
   </div>
 
   <div
@@ -79,14 +79,6 @@
     </div>
   </div>
 
-  <!-- DATESHEET MODAL -->
-  <div class="modal date-sheet-modal" id="dateSheetModal">
-    <div class="modal-content slide-up-anim">
-      <span class="close-btn" onclick="closeModal('dateSheetModal')">✖</span>
-      <div id="dateSheetContent"></div>
-    </div>
-  </div>
-
   <!-- CALENDAR MODAL -->
   <div class="modal" id="calendarModal">
     <div class="modal-content" style="max-width: 1100px;">
@@ -94,8 +86,11 @@
       <h2 style="text-align: center; margin-bottom: 8px; font-weight: 800; letter-spacing: -0.5px;"> <span
           class="shimmer-title">Academic Calendar 2026</span></h2>
       <div style="text-align: center; font-size: 0.72rem; color: var(--text-dim); margin-bottom: 16px;">
-        💡 Click on any date to change it to <b style="color: #ff4d4d;">Holiday</b>, <b style="color: #f59e0b;">Exam Day</b>, or <b style="color: #38bdf8;">Regular Class</b>. Changes save automatically!
-        <button onclick="resetCalendarOverrides()" style="display: inline-block; margin-left: 10px; padding: 3px 8px; font-size: 0.65rem; border-radius: 8px; text-transform: none; background: rgba(255,255,255,0.08);">Reset Custom Days</button>
+        💡 Click on any date to change it to <b style="color: #ff4d4d;">Holiday</b>, <b style="color: #f59e0b;">Exam
+          Day</b>, or <b style="color: #38bdf8;">Regular Class</b>. Changes save automatically!
+        <button onclick="resetCalendarOverrides()"
+          style="display: inline-block; margin-left: 10px; padding: 3px 8px; font-size: 0.65rem; border-radius: 8px; text-transform: none; background: rgba(255,255,255,0.08);">Reset
+          Custom Days</button>
       </div>
       <div id="calendarContent"></div>
     </div>
@@ -116,13 +111,17 @@
       <span class="close-btn" onclick="closeModal('calciModal')">✖</span>
       <h2 style="text-align: center; margin-bottom: 5px; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px;">
         🧮 <span class="shimmer-title">Attendance Calci</span></h2>
-      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; font-size: 0.75rem; color: var(--text-dim); font-weight: 500;">
+      <div
+        style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; font-size: 0.75rem; color: var(--text-dim); font-weight: 500;">
         <span>Target:</span>
-        <select id="calciPhaseSelector" onchange="setPhase(this.value)" class="phase-dropdown" style="font-size: 0.75rem; padding: 3px 8px;">
+        <select id="calciPhaseSelector" onchange="setPhase(this.value)" class="phase-dropdown"
+          style="font-size: 0.75rem; padding: 3px 8px;">
           <option value="mse2">🎯 Till MSE-2 (16 Nov)</option>
           <option value="ese">🎓 Till ESE (7 Dec)</option>
         </select>
-        <button onclick="resetCalci()" style="margin-left: 5px; padding: 2px 8px; font-size: 0.65rem; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); cursor: pointer; color: var(--text-dim);">↺ Reset to Actual</button>
+        <button onclick="resetCalci()"
+          style="margin-left: 5px; padding: 2px 8px; font-size: 0.65rem; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); cursor: pointer; color: var(--text-dim);">↺
+          Reset to Actual</button>
       </div>
       <div id="overall-attendance"
         style="text-align: center; margin-bottom: 12px; font-weight: 800; font-size: 1rem; color: white;">Overall
@@ -151,6 +150,45 @@
             </tr>
           </thead>
           <tbody id="calciBody">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAST DAY TO ATTEND MODAL -->
+  <div class="modal" id="lastDayModal">
+    <div class="modal-content" style="max-width: 720px; padding: 20px;">
+      <span class="close-btn" onclick="closeModal('lastDayModal')">✖</span>
+      <h2 style="text-align: center; margin-bottom: 2px; font-size: 1.25rem; font-weight: 800;">
+        📅 <span class="shimmer-title">Last Day to Attend</span>
+      </h2>
+      <p style="text-align: center; font-size: 0.72rem; color: var(--text-dim); margin-bottom: 15px;">
+        Till ESE (7 Dec) • Based on Calci inputs
+      </p>
+
+      <!-- Target Toggle -->
+      <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 16px;">
+        <button id="lastDayTab75" class="lastday-tab-btn active" onclick="switchLastDayTarget(75)">75% Target</button>
+        <button id="lastDayTab86" class="lastday-tab-btn" onclick="switchLastDayTarget(86)">86% Target</button>
+      </div>
+
+      <!-- Hero Summary -->
+      <div id="lastDayHero" style="margin-bottom: 16px;"></div>
+
+      <!-- Minimal Table Breakdown -->
+      <div class="calci-container" style="max-height: 55vh;">
+        <table class="calci-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Subject</th>
+              <th>Present / Total</th>
+              <th>Need</th>
+              <th style="text-align: right; padding-right: 10px;">Last Lecture</th>
+            </tr>
+          </thead>
+          <tbody id="lastDayBody">
             <!-- Dynamic rows -->
           </tbody>
         </table>
