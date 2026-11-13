@@ -30,19 +30,12 @@ function setPhase(phaseKey) {
 }
 
 function getPhaseInfo() {
-  let mse2Event = calendarEvents.find(e => e.type === 'mse2');
-
   if (selectedPhase === 'ese') {
     return { endDate: new Date("2026-12-07"), label: "Target: Till ESE (Last Instruction Day)", type: "ese" };
   }
 
-  // Default is MSE-2
-  if (mse2Event) {
-    let endD = new Date(mse2Event.start);
-    endD.setDate(endD.getDate() - 1);
-    return { endDate: endD, label: "Target: Till MSE-2", type: "mse2" };
-  }
-  return { endDate: new Date("2026-11-17"), label: "Target: Till MSE-2", type: "mse2" };
+  // Default is MSE-2 (Detention cutoff: 16 Nov)
+  return { endDate: new Date("2026-11-16"), label: "Target: Till MSE-2 (16 Nov)", type: "mse2" };
 }
 
 // Full future scheduled counts from startDate to target endDate
@@ -179,7 +172,7 @@ function renderDashboard() {
     <div style="width: 100%; text-align: center; margin-bottom: 12px; grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
       <span style="color: var(--text-dim); font-size: 0.85rem; font-weight: 700;">Target:</span>
       <select id="phaseSelector" onchange="setPhase(this.value)" class="phase-dropdown">
-        <option value="mse2" ${selectedPhase === 'mse2' ? 'selected' : ''}>🎯 Till MSE-2 (17 Nov)</option>
+        <option value="mse2" ${selectedPhase === 'mse2' ? 'selected' : ''}>🎯 Till MSE-2 (16 Nov)</option>
         <option value="ese" ${selectedPhase === 'ese' ? 'selected' : ''}>🎓 Till ESE (7 Dec)</option>
       </select>
     </div>
