@@ -54,7 +54,7 @@ const calendarEvents = [
 
   // Exams
   { start: "2026-09-21", end: "2026-09-26", type: "mse1", title: "MSE-I" },
-  { start: "2026-11-18", end: "2026-11-26", type: "mse2", title: "MSE-II" },
+  { start: "2026-11-18", end: "2026-11-27", type: "mse2", title: "MSE-II" },
   { start: "2026-12-14", end: "2026-12-28", type: "ese", title: "End Semester Examination" },
   { start: "2026-12-26", end: "2027-01-02", type: "practical", title: "ESE Practical" }
 ];
