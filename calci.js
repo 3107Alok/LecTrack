@@ -1,5 +1,5 @@
 // ATTENDANCE CALCULATOR MODULE
-const CALCI_VERSION = "v8";
+const CALCI_VERSION = "v9";
 if (localStorage.getItem('lectrack_calci_version') !== CALCI_VERSION) {
   localStorage.removeItem('lectrack_calci');
   localStorage.setItem('lectrack_calci_version', CALCI_VERSION);
